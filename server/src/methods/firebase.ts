@@ -1,7 +1,9 @@
-import admin from "firebase-admin";
+import admin from 'firebase-admin';
+
 if (process.env.NODE_ENV !== "production") {
     require('dotenv').config();
 }
+
 var fireBaseJson = {
     type : process.env.firebase_type,
     project_id : process.env.firebase_project_id,
@@ -18,7 +20,7 @@ var fireBaseJson = {
 
 const firebaseAdmin = admin.initializeApp({
     //@ts-ignore
-    credential: admin.credential.cert(fireBaseJson)
+    credential: admin.credential.cert(fireBaseJson),
 });
   
 export { firebaseAdmin }

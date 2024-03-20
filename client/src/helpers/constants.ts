@@ -9,6 +9,8 @@ interface Constants {
     errorTimeout: number;
     routes: Routes;
     endpoints: Endpoints;
+    githubUrl: string;
+    twitterUrl: string;
 }
 
 interface Routes {
@@ -29,6 +31,8 @@ interface Endpoints {
 //TODO_UPDATE_THIS: Update the serverUrl to your server url
 const constants : Constants = {
   serverUrl: isLocal ? "http://localhost:4500" : "https://boilerplate.up.railway.app",
+  githubUrl: "https://github.com/paaatrrrick/agent-swarm",
+  twitterUrl: "https://twitter.com/gautam_sharda_",
   isLocal: isLocal,
   errorTimeout: 7500,
   routes: {

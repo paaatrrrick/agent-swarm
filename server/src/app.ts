@@ -7,7 +7,10 @@ import bodyParser from 'body-parser';
 import cookieParser from "cookie-parser";
 import mongoose from 'mongoose';
 import AuthRouter from './routes/auth';
-import ProfileRouter from './routes/profile';
+import AgentManager from './classes/AgentManager';
+import AgentRouter from './routes/agent';
+
+const AgentManagerClass : AgentManager = new AgentManager();
 
 
 export default class Api {
@@ -50,7 +53,7 @@ export default class Api {
         app.use(cors({credentials: true, origin: this.clientUrl}));
         app.use(cookieParser());
         app.use(`/auth`, AuthRouter);
-        app.use(`/profile`, ProfileRouter);
+        app.use(`/agent`, AgentRouter);
         app.use(this.error());
 
         let PORT: number | string = process.env.PORT;
@@ -60,6 +63,9 @@ export default class Api {
         app.listen(PORT, () => {
             return console.log(`🥑 We're live: ${PORT}`);
         });
+        AgentManagerClass.init();
     }
-
 }
+
+
+export { AgentManagerClass };

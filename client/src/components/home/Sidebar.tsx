@@ -1,8 +1,7 @@
 'use client';
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { SignUpWithGooglePopUp, fireBaseAuth } from '@/helpers/firebase'
 import { signOut } from "firebase/auth";
-import { onAuthStateChanged } from 'firebase/auth';
 import Icon from '@/components/ui/icon';
 import { ModeToggle } from '../ui/ModeToggle';
 import {
@@ -12,33 +11,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import constants from '@/helpers/constants';
+import { UserOrBool } from '@/types/user';
 
 
-interface User {
-    profilePicture: string;
-    name: string;
-    email: string;
-}
 
 
-export default function Sidebar({ isSidebarOpen, toggleSidebar }: { isSidebarOpen: boolean, toggleSidebar: () => void }) {
-    const [profile, setProfile] = useState<boolean | User>(false);
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(fireBaseAuth, (user) => {
-            if (user) {
-                setProfile({
-                    profilePicture: user.photoURL || '',
-                    name: user.displayName || '',
-                    //email truncated 
-                    email: user.email ? user.email.split('@')[0] + ' ...' : ''
-                });
-                return;
-            }
-            setProfile(false);
-        });
-        return () => { unsubscribe(); }
-    }, []);
+export default function Sidebar({ isSidebarOpen, toggleSidebar, profile }: { isSidebarOpen: boolean, toggleSidebar: () => void, profile: UserOrBool }) {
 
     return (
         <div className={`fixed inset-y-0 left-0 flex flex-col items-start justify-between

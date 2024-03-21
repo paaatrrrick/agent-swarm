@@ -8,6 +8,8 @@ const UserSchema = new Schema<UserType>({
     firebaseUID: { type: String, optional: false },
     email: { type: String, default: ''},
     name: { type: String, default: ''},
+    agentIDs: { type: [String], default: []},
+
 });
 
 export default mongoose.model('User', UserSchema);

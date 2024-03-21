@@ -4,4 +4,14 @@ export interface UserType {
     firebaseUID: string,
     email: string,
     name: string,
+    agentIDs: string[],
+}
+
+
+export interface AgentType {
+    dateCreate: Date,
+    workspaceId?: string,
+    userId?: string,
+    streamingLink?: string,
+    inUse: boolean,
 }

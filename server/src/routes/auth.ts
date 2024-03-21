@@ -21,7 +21,6 @@ AuthRouter.post('/google-signup', catchAsync(async (req: RequestWithUser, res: R
     } catch (error) {
         return res.status(400).send({ message: 'Invalid Firebase UID' });
     }
-    console.log(decodedToken)
     if (decodedToken.uid !== firebaseUID) {
         return res.status(400).send({ message: 'Invalid Firebase UID' });
     }

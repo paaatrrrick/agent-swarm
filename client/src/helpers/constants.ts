@@ -25,6 +25,8 @@ interface Endpoints {
   getProfile: string;
   emailSignUp: string;
   googleSignUp: string;
+  getAgent: string;
+  getUsersAgent: string;
 }
 
 
@@ -46,6 +48,8 @@ const constants : Constants = {
     getProfile: "/profile/get",
     emailSignUp: "/auth/email-signup",
     googleSignUp: "/auth/google-signup",
+    getAgent: "/agent/getAgent",
+    getUsersAgent: "/agent/getUsersAgent",
   }
 };
 

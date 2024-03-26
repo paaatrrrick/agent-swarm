@@ -8,11 +8,9 @@ IS_LOCAL = True
 
 
 local_endpoint = "ws://localhost:4500"
-prod_endpoint = "ws://localhost:4500"
+prod_endpoint = "wss://agent-swarm-production.up.railway.app"
 
 endpoint = local_endpoint if IS_LOCAL else prod_endpoint
-
-
 
 
 

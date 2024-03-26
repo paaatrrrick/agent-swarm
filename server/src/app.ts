@@ -9,8 +9,14 @@ import mongoose from 'mongoose';
 import AuthRouter from './routes/auth';
 import AgentManager from './classes/AgentManager';
 import AgentRouter from './routes/agent';
+import { createWorkspace } from './methods/aws';
+import { Server as WebSocketServer } from 'ws'; // Import WebSocketServer
+
 
 const AgentManagerClass : AgentManager = new AgentManager();
+
+
+let sendMessageFunction = null;
 
 
 export default class Api {
@@ -46,8 +52,10 @@ export default class Api {
         db.on("error", console.error.bind(console, "connection error:"));
         db.once("open", () => {
             console.log("🍌 Mongo connection successful");
+            //AgentManagerClass.init();
         });
 
+        // createWorkspace();
         const app = express();
         app.use(bodyParser.json(), bodyParser.urlencoded({ extended: false }))
         app.use(cors({credentials: true, origin: this.clientUrl}));
@@ -60,12 +68,32 @@ export default class Api {
         if (PORT == null || PORT == "") {
             PORT = this.port;
         }
-        app.listen(PORT, () => {
-            return console.log(`🥑 We're live: ${PORT}`);
+        const server = app.listen(PORT, () => {
+            console.log(`🥑 We're live on port ${PORT}`);
         });
-        AgentManagerClass.init();
+
+        const wss = new WebSocketServer({ server });
+
+        // WebSocket server setup
+    
+        wss.on('connection', ws => {
+            console.log('WebSocket client connected');
+
+            sendMessageFunction = (message : string) => {
+                console.log('at new and improved sendMessageFunction');
+                ws.send(message);
+            }
+
+            ws.on('message', message => {
+                console.log(`Received message => ${message}`);
+                ws.send(`Hello, you sent -> ${message}`);
+            });
+            ws.on('close', () => {
+                console.log('WebSocket client disconnected');
+            });
+        });
     }
 }
 
 
-export { AgentManagerClass };
+export { AgentManagerClass, sendMessageFunction };

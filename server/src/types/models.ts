@@ -13,5 +13,8 @@ export interface AgentType {
     workspaceId?: string,
     userId?: string,
     streamingLink?: string,
+    directoryId?: string,
+    bundleId?: string,
     inUse: boolean,
+    complete: boolean,
 }

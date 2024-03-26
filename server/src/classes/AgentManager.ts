@@ -3,31 +3,19 @@ import Agent from "../models/Agent";
 import { AgentType } from "../types/models";
 import { Types } from "mongoose";
 
-const AVAILABLE_AGENT_STACK_SIZE = 2;
-
 class AgentManager {
-    availableAgentIDsStack: string[];
+    availableAgentSet: Set<string>;
 
     constructor() {
-        this.availableAgentIDsStack = [];
+        this.availableAgentSet = new Set();
     }
 
     async init() : Promise<void> {
-        console.log('💪 Initializing agent manager')
-        const agents = await Agent.find({inUse: false});
+        const agents = await Agent.find({inUse: false, complete: true});
         for (const agent of agents) {
-            this.availableAgentIDsStack.push(agent._id.toString());
+            this.availableAgentSet.add(agent._id.toString());
         }
-
-        /* while availableAgentIDsStack.length < AVAILABLE_AGENT_STACK_SIZE, create new agent */
-        while (this.availableAgentIDsStack.length < AVAILABLE_AGENT_STACK_SIZE) {
-            const agentID = await this.createAgent();
-            if (agentID === '') {
-                break;
-            }
-            this.availableAgentIDsStack.push(agentID);
-        }
-        console.log('🤖 There are ', this.availableAgentIDsStack.length.toString(), ' Available Agents');
+        console.log('🤖 There are', this.availableAgentSet.size.toString(), 'Available Agents');
         return
     }
 
@@ -40,7 +28,6 @@ class AgentManager {
             agent.streamingLink = streamingLink;
             await agent.save();
         } catch (error) {
-            //findByIdAndDelete
             await Agent.findByIdAndDelete(agent._id);
             return '';
         }
@@ -48,15 +35,15 @@ class AgentManager {
     }
 
     async getAgent() : Promise<AgentType & {_id : Types.ObjectId}> {
-        if (this.availableAgentIDsStack.length === 0) {
-            const agentID = await this.createAgent();
-            if (agentID === '') {
-                throw new Error('Unable to get an agent');
-            }
-            this.availableAgentIDsStack.push(agentID);
+        if (this.availableAgentSet.size === 0) {
+                await this.init();
+                if (this.availableAgentSet.size === 0) {
+                    throw new Error('No available agents');
+                }
         }
-
-        const finalAgentID = this.availableAgentIDsStack.pop();
+        
+        const finalAgentID = this.availableAgentSet.values().next().value;
+        this.availableAgentSet.delete(finalAgentID);
         const agent = await Agent.findById(finalAgentID);
         agent.inUse = true;
         await agent.save();

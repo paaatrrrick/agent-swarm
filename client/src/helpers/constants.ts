@@ -18,7 +18,7 @@ interface Routes {
   login: string;
   signup: string;
   home: string;
-  profile: string;
+  dashboard: string;
 }
 
 interface Endpoints {
@@ -38,11 +38,11 @@ const constants : Constants = {
   isLocal: isLocal,
   errorTimeout: 7500,
   routes: {
-    defaultAuthenticatedRoute: "/profile",
+    defaultAuthenticatedRoute: "/dashboard",
     login: "/login",
     signup: "/signup",
     home: "/",
-    profile: "/profile",
+    dashboard: "/dashboard",
   },
   endpoints: {
     getProfile: "/profile/get",

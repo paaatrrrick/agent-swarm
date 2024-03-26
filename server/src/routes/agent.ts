@@ -7,6 +7,7 @@ import { RequestWithUser } from '../types/apiTypes';
 import { AgentManagerClass } from '../app';
 import { Authenticate } from '../methods/middleware';
 import Agent from '../models/Agent';
+import { sendMessageFunction } from '../app';
 const AgentRouter = express.Router();
 
 AgentRouter.get('/getAgent', catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -30,10 +31,20 @@ AgentRouter.get('/getUsersAgent', Authenticate, catchAsync(async (req: RequestWi
         res.status(200).send({ workspaceId, streamingLink });
         return;
     }
-
     const agentID = user.agentIDs[0];
     const agent = await Agent.findById(agentID);
     res.status(200).send({ workspaceId : agent.workspaceId, streamingLink : agent.streamingLink });
 }));
+
+
+AgentRouter.post('/sendMessageToWorkSpace', catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const body = JSON.stringify(req.body);
+    console.log('at send message to workspace route');
+    sendMessageFunction(body);
+    res.status(200).send({ message: 'Message sent' });
+}));
+
+
+
 
 export default AgentRouter;

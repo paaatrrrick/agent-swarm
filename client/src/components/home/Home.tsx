@@ -5,9 +5,10 @@ import clsx from 'clsx'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { StringAgentUndefined } from '@/types/user';
-import { Loader } from '../Loader';
+import Videoplayer from './Videoplayer';
 
 export default function Home({ isSidebarOpen, toggleSidebar, agent }: { isSidebarOpen: boolean, toggleSidebar: () => void, agent: StringAgentUndefined }) {
+
     return (
         <>
             {/* Button to toggle sidebar from the main content area */}
@@ -33,8 +34,8 @@ export default function Home({ isSidebarOpen, toggleSidebar, agent }: { isSideba
 function Agent({ agent }: { agent: StringAgentUndefined }) {
     return (
         <div className='w-[70%] mt-8 aspect-video'>
-
-            {
+            <Videoplayer path='http://45.56.104.109/hls/teststream.m3u8' />
+            {/* {
                 typeof agent === 'string' && <p className='font-mono text-2xl text-red-500'>{agent}</p>
             }
 
@@ -51,7 +52,7 @@ function Agent({ agent }: { agent: StringAgentUndefined }) {
                 agent === undefined && (
                     <Loader text="Fetching agent details" className='w-full h-full' />
                 )
-            }
+            } */}
         </div>
     )
 }

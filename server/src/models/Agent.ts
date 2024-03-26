@@ -7,7 +7,10 @@ const AgentSchema = new Schema<AgentType>({
     workspaceId: { type: String, optional: true },
     userId: { type: String, optional: true },
     streamingLink: { type: String, optional: true },
+    directoryId: { type: String, optional: true },
+    bundleId: { type: String, optional: true },
     inUse: { type: Boolean, default: false },
+    complete: { type: Boolean, default: false },
 });
 
 export default mongoose.model('Agent', AgentSchema);

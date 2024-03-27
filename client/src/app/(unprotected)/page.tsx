@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { SignUpWithGooglePopUp, fireBaseAuth } from '@/helpers/firebase'
 import { UserOrBool } from '@/types/user';
 import { onAuthStateChanged } from 'firebase/auth';
+import { Button } from '@/components/ui/button';
+import constants from '@/helpers/constants';
 export default function Page() {
   const [profile, setProfile] = useState<UserOrBool>(false);
 
@@ -22,8 +24,9 @@ export default function Page() {
     <div className='w-full h-full'>
       <div className='flex justify-center items-center h-full flex-col gap-4'>
         <div className='text-4xl font-bold text-center'>
-          Welcome to the Dashboard
+          Welcome to Home
         </div>
+        <Button onClick={() => { window.location.href = constants.routes.dashboard }}>Go To Agent Screen</Button>
 
         {typeof profile === "object" &&
           <div className='w-sm flex items-center rounded-sm border-border border mt-2 mb-2 px-4 py-2 hover:cursor-pointer'>

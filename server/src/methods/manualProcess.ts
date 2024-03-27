@@ -11,12 +11,13 @@ interface AgentTypeNew {
     imageId?: string,
     id?: string,
     completed?: boolean,
+    ipAddress?: string,
 }
 
 type manualProcessRes = Document<unknown, {}, AgentType> & AgentType & {_id: Types.ObjectId;}
 
 async function manualProcess(params : AgentTypeNew) : Promise<manualProcessRes> {
-    const { workspaceId, userId, streamingLink, directoryId, imageId, id, completed } = params;
+    const { workspaceId, userId, streamingLink, directoryId, imageId, id, completed, ipAddress } = params;
     if (id) {
         const agent = await Agent.findById(id);
         if (!agent) throw new Error('Agent not found');
@@ -26,6 +27,7 @@ async function manualProcess(params : AgentTypeNew) : Promise<manualProcessRes> 
         agent.directoryId = directoryId || agent.directoryId;
         agent.imageId = imageId || agent.imageId;
         agent.complete = completed || agent.complete;
+        agent.ipAddress = ipAddress || agent.ipAddress;
         await agent.save();
         console.log('🤖 Agent updated');
         console.log(agent);
@@ -38,6 +40,7 @@ async function manualProcess(params : AgentTypeNew) : Promise<manualProcessRes> 
     agent.directoryId = directoryId || '';
     agent.imageId = imageId || '';
     agent.complete = completed || false;
+    agent.ipAddress = ipAddress || '';
     await agent.save();
     console.log('🤖 New agent created');
     console.log(agent);

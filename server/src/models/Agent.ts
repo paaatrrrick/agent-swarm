@@ -11,6 +11,7 @@ const AgentSchema = new Schema<AgentType>({
     imageId: { type: String, optional: true },
     inUse: { type: Boolean, default: false },
     complete: { type: Boolean, default: false },
+    ipAddress: { type: String, optional: true },
 });
 
 export default mongoose.model('Agent', AgentSchema);

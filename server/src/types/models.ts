@@ -17,4 +17,5 @@ export interface AgentType {
     imageId?: string,
     inUse: boolean,
     complete: boolean,
+    ipAddress?: string,
 }

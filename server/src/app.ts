@@ -71,7 +71,7 @@ export default class Api {
         }
         const server = app.listen(PORT, () => {
             console.log(`🥑 We're live on port ${PORT}`);
-            //manualProcess({workspaceId: 'ws-xqkxmqq9g', directoryId: "d-9067fa7ce9", streamingLink: "http://45.56.104.109/hls/teststream.m3u8", imageId: "wsi-1crh12jpq", completed: true});
+            //manualProcess({id: '66039df5a8738d00a5260365', ipAddress: "172.16.0.93"});
         });
 
         const wss = new WebSocketServer({ server });

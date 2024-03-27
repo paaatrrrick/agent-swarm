@@ -8,7 +8,7 @@ const AgentSchema = new Schema<AgentType>({
     userId: { type: String, optional: true },
     streamingLink: { type: String, optional: true },
     directoryId: { type: String, optional: true },
-    bundleId: { type: String, optional: true },
+    imageId: { type: String, optional: true },
     inUse: { type: Boolean, default: false },
     complete: { type: Boolean, default: false },
 });

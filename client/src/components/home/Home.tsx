@@ -6,6 +6,7 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { StringAgentUndefined } from '@/types/user';
 import Videoplayer from './Videoplayer';
+import { Loader } from '../Loader';
 
 export default function Home({ isSidebarOpen, toggleSidebar, agent }: { isSidebarOpen: boolean, toggleSidebar: () => void, agent: StringAgentUndefined }) {
 
@@ -14,6 +15,7 @@ export default function Home({ isSidebarOpen, toggleSidebar, agent }: { isSideba
             {/* Button to toggle sidebar from the main content area */}
             <div className={clsx(isSidebarOpen && 'hidden', 'absolute top-4 left-4 z-10 duration-200')}>
                 <Icon type="hamburger" onClick={toggleSidebar} hideBorder={true} />
+                {(agent && typeof agent !== "string") && <p className='font-mono text-2xl text-red-500'>We have agent {JSON.stringify(agent)}</p>}
             </div>
             <div className={`flex-1 min-h-screen transition-margin duration-300 ease-in-out ${isSidebarOpen ? "ml-64" : "ml-0"}`}>
                 <div className='w-full h-full flex flex-col items-center justify-start'>
@@ -34,8 +36,7 @@ export default function Home({ isSidebarOpen, toggleSidebar, agent }: { isSideba
 function Agent({ agent }: { agent: StringAgentUndefined }) {
     return (
         <div className='w-[70%] mt-8 aspect-video'>
-            <Videoplayer path='http://45.56.104.109/hls/teststream.m3u8' />
-            {/* {
+            {
                 typeof agent === 'string' && <p className='font-mono text-2xl text-red-500'>{agent}</p>
             }
 
@@ -43,7 +44,7 @@ function Agent({ agent }: { agent: StringAgentUndefined }) {
                 typeof agent === 'object' && (
                     <div className='flex flex-col items-start justify-start'>
                         <p className='font-mono text-2xl'>Workspace ID: {agent.workspaceId}</p>
-                        <p className='font-mono text-2xl'>Streaming Link: {agent.streamingLink}</p>
+                        <Videoplayer path={agent.streamingLink} />
                     </div>
                 )
             }
@@ -52,7 +53,7 @@ function Agent({ agent }: { agent: StringAgentUndefined }) {
                 agent === undefined && (
                     <Loader text="Fetching agent details" className='w-full h-full' />
                 )
-            } */}
+            }
         </div>
     )
 }

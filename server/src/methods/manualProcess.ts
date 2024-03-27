@@ -8,15 +8,15 @@ interface AgentTypeNew {
     userId?: string,
     streamingLink?: string,
     directoryId?: string,
-    bundleId?: string,
+    imageId?: string,
     id?: string,
-    completed: boolean,
+    completed?: boolean,
 }
 
 type manualProcessRes = Document<unknown, {}, AgentType> & AgentType & {_id: Types.ObjectId;}
 
 async function manualProcess(params : AgentTypeNew) : Promise<manualProcessRes> {
-    const { workspaceId, userId, streamingLink, directoryId, bundleId, id, completed } = params;
+    const { workspaceId, userId, streamingLink, directoryId, imageId, id, completed } = params;
     if (id) {
         const agent = await Agent.findById(id);
         if (!agent) throw new Error('Agent not found');
@@ -24,7 +24,7 @@ async function manualProcess(params : AgentTypeNew) : Promise<manualProcessRes> 
         agent.userId = userId || agent.userId;
         agent.streamingLink = streamingLink || agent.streamingLink;
         agent.directoryId = directoryId || agent.directoryId;
-        agent.bundleId = bundleId || agent.bundleId;
+        agent.imageId = imageId || agent.imageId;
         agent.complete = completed || agent.complete;
         await agent.save();
         console.log('🤖 Agent updated');
@@ -36,7 +36,7 @@ async function manualProcess(params : AgentTypeNew) : Promise<manualProcessRes> 
     agent.userId = userId || '';
     agent.streamingLink = streamingLink || '';
     agent.directoryId = directoryId || '';
-    agent.bundleId = bundleId || '';
+    agent.imageId = imageId || '';
     agent.complete = completed || false;
     await agent.save();
     console.log('🤖 New agent created');

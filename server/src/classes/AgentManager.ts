@@ -19,21 +19,6 @@ class AgentManager {
         return
     }
 
-    async createAgent() : Promise<string> {
-        const agent = new Agent();
-        await agent.save();
-        try {
-            const { workspaceId, streamingLink } = await createWorkspace();
-            agent.workspaceId = workspaceId;
-            agent.streamingLink = streamingLink;
-            await agent.save();
-        } catch (error) {
-            await Agent.findByIdAndDelete(agent._id);
-            return '';
-        }
-        return agent._id.toString();
-    }
-
     async getAgent() : Promise<AgentType & {_id : Types.ObjectId}> {
         if (this.availableAgentSet.size === 0) {
                 await this.init();

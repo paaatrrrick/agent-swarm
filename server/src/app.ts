@@ -11,6 +11,7 @@ import AgentManager from './classes/AgentManager';
 import AgentRouter from './routes/agent';
 import { createWorkspace } from './methods/aws';
 import { Server as WebSocketServer } from 'ws'; // Import WebSocketServer
+import { manualProcess } from './methods/manualProcess';
 
 
 const AgentManagerClass : AgentManager = new AgentManager();
@@ -70,6 +71,7 @@ export default class Api {
         }
         const server = app.listen(PORT, () => {
             console.log(`🥑 We're live on port ${PORT}`);
+            //manualProcess({workspaceId: 'ws-xqkxmqq9g', directoryId: "d-9067fa7ce9", streamingLink: "http://45.56.104.109/hls/teststream.m3u8", imageId: "wsi-1crh12jpq", completed: true});
         });
 
         const wss = new WebSocketServer({ server });

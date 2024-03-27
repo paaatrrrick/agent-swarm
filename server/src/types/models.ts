@@ -14,7 +14,7 @@ export interface AgentType {
     userId?: string,
     streamingLink?: string,
     directoryId?: string,
-    bundleId?: string,
+    imageId?: string,
     inUse: boolean,
     complete: boolean,
 }

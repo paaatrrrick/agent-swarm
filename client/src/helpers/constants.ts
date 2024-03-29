@@ -5,6 +5,7 @@ try {
   
 interface Constants {
     serverUrl: string;
+    websocketUrl: string;
     isLocal: boolean;
     errorTimeout: number;
     routes: Routes;
@@ -32,7 +33,8 @@ interface Endpoints {
 
 //TODO_UPDATE_THIS: Update the serverUrl to your server url
 const constants : Constants = {
-  serverUrl: isLocal ? "http://localhost:4500" : "https://boilerplate.up.railway.app",
+  serverUrl: isLocal ? "http://localhost:4500" : "https://agent-swarm-production.up.railway.app",
+  websocketUrl: isLocal ? "ws://localhost:4500" : "wss://agent-swarm-production.up.railway.app",
   githubUrl: "https://github.com/paaatrrrick/agent-swarm",
   twitterUrl: "https://twitter.com/gautam_sharda_",
   isLocal: isLocal,

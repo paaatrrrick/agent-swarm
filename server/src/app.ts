@@ -9,15 +9,15 @@ import mongoose from 'mongoose';
 import AuthRouter from './routes/auth';
 import AgentManager from './classes/AgentManager';
 import AgentRouter from './routes/agent';
-import { createWorkspace } from './methods/aws';
 import { Server as WebSocketServer } from 'ws'; // Import WebSocketServer
 import { manualProcess } from './methods/manualProcess';
+import WebSocketObject from './classes/Socket';
 
 
 const AgentManagerClass : AgentManager = new AgentManager();
 
 
-let sendMessageFunction = null;
+let websockObject = null;
 
 
 export default class Api {
@@ -56,7 +56,6 @@ export default class Api {
             //AgentManagerClass.init();
         });
 
-        // createWorkspace();
         const app = express();
         app.use(bodyParser.json(), bodyParser.urlencoded({ extended: false }))
         app.use(cors({credentials: true, origin: this.clientUrl}));
@@ -71,31 +70,31 @@ export default class Api {
         }
         const server = app.listen(PORT, () => {
             console.log(`🥑 We're live on port ${PORT}`);
-            //manualProcess({id: '66039df5a8738d00a5260365', ipAddress: "172.16.0.93"});
         });
 
-        const wss = new WebSocketServer({ server });
+        websockObject = new WebSocketObject(server);
+        websockObject.init();
 
-        // WebSocket server setup
+        // // WebSocket server setup
     
-        wss.on('connection', ws => {
-            console.log('WebSocket client connected');
+        // wss.on('connection', ws => {
+        //     console.log('WebSocket client connected');
 
-            sendMessageFunction = (message : string) => {
-                console.log('at new and improved sendMessageFunction');
-                ws.send(message);
-            }
+        //     sendMessageFunction = (message : string) => {
+        //         console.log('at new and improved sendMessageFunction');
+        //         ws.send(message);
+        //     }
 
-            ws.on('message', message => {
-                console.log(`Received message => ${message}`);
-                ws.send(`Hello, you sent -> ${message}`);
-            });
-            ws.on('close', () => {
-                console.log('WebSocket client disconnected');
-            });
-        });
+        //     ws.on('message', message => {
+        //         console.log(`Received message => ${message}`);
+        //         ws.send(`Hello, you sent -> ${message}`);
+        //     });
+        //     ws.on('close', () => {
+        //         console.log('WebSocket client disconnected');
+        //     });
+        // });
     }
 }
 
 
-export { AgentManagerClass, sendMessageFunction };
+export { AgentManagerClass, websockObject };

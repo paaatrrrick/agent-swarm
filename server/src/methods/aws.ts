@@ -70,7 +70,7 @@ async function deleteWorkspace (workspaceId: string) : Promise<void> {
     return;
 }
 
-export { createWorkspace, deleteWorkspace };
+// export { createWorkspace, deleteWorkspace };
 
 
 

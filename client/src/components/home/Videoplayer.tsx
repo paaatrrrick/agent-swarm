@@ -1,8 +1,8 @@
 //@ts-nocheck
 
 import React from 'react'
+import VideoJS from './VideoJS';
 // This imports the functional component from the previous sample.
-import VideoJS from './Videojs'
 
 const Videoplayer = ({ path }: { path: string }) => {
     const playerRef = React.useRef(null);

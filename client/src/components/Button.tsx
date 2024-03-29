@@ -21,8 +21,8 @@ const variantStyles = {
       'ring-slate-200 text-slate-700 hover:text-slate-900 hover:ring-slate-300 active:bg-slate-100 active:text-slate-600 focus-visible:outline-brandColor-600 focus-visible:ring-slate-300',
     white:
       'ring-slate-700 text-white hover:ring-slate-500 active:ring-slate-700 active:text-slate-400 focus-visible:outline-white',
-     brandColor:
-      'ring-brandColor-600 text-brandColor-600 hover:ring-brandColor-500 active:ring-brandColor-800 active:text-brandColor-100 focus-visible:outline-brandColor-600', 
+    brandColor:
+      'ring-brandColor-600 text-brandColor-600 hover:ring-brandColor-500 active:ring-brandColor-800 active:text-brandColor-100 focus-visible:outline-brandColor-600',
   },
 }
 
@@ -35,12 +35,13 @@ type ButtonProps = {
 }
 
 
-export function Button({ variant = 'solid', color = 'brandColor', className, ...props } : ButtonProps) {
+export function Button({ variant = 'solid', color = 'brandColor', className, ...props }: ButtonProps) {
   className = clsx(
     baseStyles[variant],
     //@ts-ignore
     variantStyles[variant][color],
     className,
+    'hover:disabled:cursor-not-allowed'
   )
 
   return typeof props.href === 'undefined' ? (

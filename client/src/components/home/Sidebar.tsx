@@ -44,7 +44,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile }: { isS
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild className='hover:cursor-pointer bg-secondary hover:bg-background'>
-                            <div className='w-full flex items-center rounded-sm border-border border mt-2 mb-2 px-4 py-2 hover:cursor-pointer'>
+                            <div className='w-full flex items-center rounded-sm border-border border mt-2 mb-2 px-4 h-16 hover:cursor-pointer'>
                                 <div className="flex items-center justify-center">
                                     <img src={profile.profilePicture} alt="Profile Picture" className="h-10 w-10 rounded-full" />
                                 </div>
@@ -65,9 +65,9 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile }: { isS
 
                 {
                     !profile &&
-                    <button className="bg-secondary border border-border rounded-md h-12 px-3 w-full flex items-center justify-start mt-4 hover:cursor-pointer hover:bg-background" onClick={() => { SignUpWithGooglePopUp(() => { }) }}>
+                    <button className="h-16 bg-secondary border border-border rounded-md px-3 w-full flex items-center justify-start mt-4 hover:cursor-pointer hover:bg-background" onClick={() => { SignUpWithGooglePopUp(() => { }) }}>
                         <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=" />
-                        <p className='text-sm ml-2'>Join with Google</p>
+                        <p className='text-sm ml-4 font-mono'>Join with Google</p>
                     </button>
                 }
             </div>

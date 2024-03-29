@@ -8,7 +8,7 @@ export type UserOrBool = boolean | User;
 
 
 export interface Agent {
-    workspaceId: string;
+    agentID: string;
     streamingLink: string;
 }
 

@@ -7,7 +7,6 @@ import { RequestWithUser } from '../types/apiTypes';
 import { AgentManagerClass } from '../app';
 import { Authenticate } from '../methods/middleware';
 import Agent from '../models/Agent';
-import { sendMessageFunction } from '../app';
 const AgentRouter = express.Router();
 
 AgentRouter.get('/getAgent', catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -20,7 +19,7 @@ AgentRouter.get('/getUsersAgent', Authenticate, catchAsync(async (req: RequestWi
     const user = req.user;
 
     if (user.agentIDs.length === 0) {
-        const { workspaceId, streamingLink, _id } = await AgentManagerClass.getAgent();
+        const { streamingLink, _id } = await AgentManagerClass.getAgent();
         user.agentIDs.push(_id.toString());
         await user.save();
 
@@ -28,22 +27,14 @@ AgentRouter.get('/getUsersAgent', Authenticate, catchAsync(async (req: RequestWi
         const agent = await Agent.findByIdAndUpdate(_id, { userId: user._id });
         await agent.save();
 
-        res.status(200).send({ workspaceId, streamingLink });
+        res.status(200).send({ agentID: _id.toString(), streamingLink });
         return;
     }
+
     const agentID = user.agentIDs[0];
     const agent = await Agent.findById(agentID);
-    res.status(200).send({ workspaceId : agent.workspaceId, streamingLink : agent.streamingLink });
+    res.status(200).send({ agentID : agent._id.toString(), streamingLink : agent.streamingLink });
 }));
-
-
-AgentRouter.post('/sendMessageToWorkSpace', catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const body = JSON.stringify(req.body);
-    console.log('at send message to workspace route');
-    sendMessageFunction(body);
-    res.status(200).send({ message: 'Message sent' });
-}));
-
 
 
 

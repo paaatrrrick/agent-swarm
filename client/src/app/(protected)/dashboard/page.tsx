@@ -6,12 +6,15 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { fireBaseAuth, getAuthToken } from '@/helpers/firebase'
 import { Agent, UserOrBool, StringAgentUndefined } from '@/types/user';
 import constants from '@/helpers/constants';
+import { set } from 'firebase/database';
 
 
 const ScreenComponent = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [profile, setProfile] = useState<UserOrBool>(false);
     const [agent, setAgent] = useState<StringAgentUndefined>(undefined);
+    const [promptRunning, setPromptRunning] = useState<boolean>(true);
+    const [ws, setWS] = useState<WebSocket | null>(null);
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -28,13 +31,46 @@ const ScreenComponent = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                const { workspaceId, streamingLink } = data;
-                setAgent({ workspaceId, streamingLink });
+                const { agentID, streamingLink } = data;
+                console.log('agent', agentID, streamingLink)
+                setAgent({ agentID, streamingLink });
+                setupWebsocket(agentID);
                 return
             }
             setAgent('Error fetching agent details');
         } catch (error) {
             setAgent('Error fetching agent details');
+        }
+    }
+
+    const setupWebsocket = async (agentID: string) => {
+        console.log('trying to connect to websocket');
+        const newWS = new WebSocket(constants.websocketUrl);
+        newWS.onopen = () => {
+            newWS.send(JSON.stringify({ type: 'config', agentID }));
+        };
+        newWS.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            const { type } = data;
+            console.log('received message', data);
+            if (type === 'config') {
+                const { promptRunning } = data;
+                setPromptRunning(promptRunning);
+            } else if (type === 'message') {
+                console.log('message received', data);
+                setPromptRunning(false);
+            }
+        };
+        setWS(newWS);
+        return () => newWS.close();
+    }
+
+    const sendMessage = (message: Object): void => {
+        if (ws) {
+            console.log('sending message', message)
+            console.log(JSON.stringify({ type: 'message', ...message }))
+            ws.send(JSON.stringify({ type: 'message', ...message }));
+            setPromptRunning(true);
         }
     }
 
@@ -56,7 +92,7 @@ const ScreenComponent = () => {
     return (
         <div className="relative min-h-screen bg-background">
             <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile} />
-            <Home isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} agent={agent} />
+            <Home isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} agent={agent} promptRunning={promptRunning} sendMessage={sendMessage} />
         </div>
     );
 };

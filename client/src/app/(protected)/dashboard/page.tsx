@@ -15,6 +15,7 @@ const ScreenComponent = () => {
     const [agent, setAgent] = useState<StringAgentUndefined>(undefined);
     const [promptRunning, setPromptRunning] = useState<boolean>(true);
     const [ws, setWS] = useState<WebSocket | null>(null);
+    const [selectedAgent, setSelectedAgent] = useState<string>("Demo");
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -91,8 +92,8 @@ const ScreenComponent = () => {
 
     return (
         <div className="relative min-h-screen bg-background">
-            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile} />
-            <Home isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} agent={agent} promptRunning={promptRunning} sendMessage={sendMessage} />
+            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile}   selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent} />
+            <Home isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} agent={agent} promptRunning={promptRunning} sendMessage={sendMessage} selectedAgent={selectedAgent} />
         </div>
     );
 };

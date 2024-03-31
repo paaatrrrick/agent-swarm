@@ -10,7 +10,7 @@ class AgentManager {
     }
 
     async init() : Promise<void> {
-        const agents = await Agent.find({inUse: false, complete: true});
+        const agents = await Agent.find({inUse: true, complete: true});
         for (const agent of agents) {
             this.availableAgentSet.add(agent._id.toString());
         }

@@ -1,5 +1,5 @@
 'use client';
-import React from 'react'
+import React, { useState } from 'react'
 import { SignUpWithGooglePopUp, fireBaseAuth } from '@/helpers/firebase'
 import { signOut } from "firebase/auth";
 import Icon from '@/components/ui/icon';
@@ -13,11 +13,12 @@ import {
 import constants from '@/helpers/constants';
 import { UserOrBool } from '@/types/user';
 
+export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, selectedAgent, setSelectedAgent }: { isSidebarOpen: boolean, toggleSidebar: () => void, profile: UserOrBool, selectedAgent: string, setSelectedAgent: (agentName: string) => void }) {
+    const [agents, setAgents] = useState<string[]>(["Demo"]);
 
-
-
-
-export default function Sidebar({ isSidebarOpen, toggleSidebar, profile }: { isSidebarOpen: boolean, toggleSidebar: () => void, profile: UserOrBool }) {
+    const addNewAgent = () => {
+        setAgents([...agents, "Untitled"]);
+    }
 
     return (
         <div className={`fixed inset-y-0 left-0 flex flex-col items-start justify-between
@@ -29,6 +30,23 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile }: { isS
                 <div className='w-full flex justify-between items-center'>
                     <h3 className='font-mono text-xl'>Agent Swarm 🐝</h3>
                     <Icon type="hamburger" onClick={toggleSidebar} />
+                </div>
+                <div className='mt-4'>
+                    {agents.map((agent, index) => (
+                        <div
+                            key={index}
+                            className={`p-2 rounded-md cursor-pointer font-mono ${selectedAgent === agent ? 'bg-primary text-white' : 'bg-background hover:bg-gray-100'}`}
+                            onClick={() => setSelectedAgent(agent)}
+                        >
+                            {agent} ({index})
+                        </div>
+                    ))}
+                    <button
+                        className='bg-primary text-white p-2 rounded-md mt-2 w-full font-mono'
+                        onClick={addNewAgent}
+                    >
+                        New Agent
+                    </button>
                 </div>
             </div>
 

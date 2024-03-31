@@ -50,6 +50,8 @@ class WebSocketObject {
         } else if (type === 'message') {
             
             const { message } = data;
+            console.log('we are here');
+            console.log(message);
             const { agentID } = this.uniqueIDMap.get(uniqueID);
 
             this.agentIDMap.get(agentID).promptRunning = true;
@@ -97,12 +99,18 @@ class WebSocketObject {
 
         const url : string = `${agent.ipAddress}/message`;
         console.log(url);
+        console.log(message);
         const data = {message: message, first: 1}
+        try {
+            const res = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
+            console.log('returned from request');
+            if (res.status !== 200) return "error";
+            return res.data;
 
-        const res = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
-        console.log(res);
-        if (res.status !== 200) return "error";
-        return res.data;
+        } catch (error) {
+            return " internal error";
+        }
+
     }
 }
 

@@ -56,7 +56,6 @@ class WebSocketObject {
                 this.agentIDMap.get(agentID).promptRunning = true;
                 this.sendMessageWithagentID(agentID, JSON.stringify({type: "config", ...this.agentIDMap.get(agentID)}));
     
-                console.log('about to call talk to agent');
                 const res = await this.talkToagent(agentID, message)
     
                 //set promptRunning to false
@@ -71,7 +70,6 @@ class WebSocketObject {
     async handleClose(uniqueID : string) : Promise<void> {
         try {
             const { agentID } = this.uniqueIDMap.get(uniqueID);
-            console.log('disconnected');
             this.uniqueIDMap.delete(uniqueID);
             const agent = this.agentIDMap.get(agentID);
             agent.uniqueIDs = agent.uniqueIDs.filter(id => id !== uniqueID);
@@ -107,11 +105,13 @@ class WebSocketObject {
 
     async talkToagent(agentID : string, message : string) : Promise<string> {
         try {
+            console.log(message);
             const agent = await Agent.findById(agentID);
             if (!agent) return "agent not found";
     
             const url : string = `${agent.ipAddress}/message`;
             const data = {message: message, first: 1}
+            console.log(message);
             const res = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
             if (res.status !== 200) return "error";
             return res.data;

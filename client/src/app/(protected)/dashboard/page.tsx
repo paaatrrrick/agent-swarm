@@ -6,12 +6,14 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { fireBaseAuth, getAuthToken } from '@/helpers/firebase'
 import { UserOrBool, StringAgentUndefined } from '@/types/user';
 import constants from '@/helpers/constants';
+import { set } from 'firebase/database';
 
 
 const ScreenComponent = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [profile, setProfile] = useState<UserOrBool>(false);
     const [currentAgentIndex, setCurrentAgentIndex] = useState<number | undefined>(undefined);
+    const [toDeleteAgents, setToDeleteAgents] = useState<StringAgentUndefined[]>([]);
     const [agents, setAgents] = useState<StringAgentUndefined[]>([]);
     const [promptRunning, setPromptRunning] = useState<boolean>(true);
     const [ws, setWS] = useState<WebSocket | null>(null);
@@ -30,7 +32,8 @@ const ScreenComponent = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                setAgents(data.agents);
+                setAgents([data.agents[0]]);
+                setToDeleteAgents(data.agents);
                 setCurrentAgentIndex(0);
                 setupWebsocket(data.agents[0].agentID);
                 return
@@ -49,6 +52,8 @@ const ScreenComponent = () => {
             const { type } = data;
             if (type === 'config') {
                 const { promptRunning } = data;
+                console.log('message with config information');
+                console.log(data);
                 setPromptRunning(promptRunning);
             } else if (type === 'message') {
                 setPromptRunning(false);
@@ -83,16 +88,22 @@ const ScreenComponent = () => {
     const setCurrentAgentIndexWrapper = (index: number): void => {
         if (currentAgentIndex === index) return
         ws?.close()
+        setPromptRunning(true)
         setWS(null)
         setCurrentAgentIndex(index)
         setupWebsocket(agents[index].agentID);
-        setPromptRunning(true)
+    }
+
+    const addAgent = async () => {
+        //wait half a second
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        setAgents([...agents, toDeleteAgents[1]]);
     }
 
     return (
         <div className="relative min-h-screen bg-background">
-            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile} agents={agents} currentAgentIndex={currentAgentIndex} setCurrentAgentIndex={setCurrentAgentIndexWrapper} />
-            <Home isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} agent={(agents.length === 0 || currentAgentIndex === undefined) ? undefined : agents[currentAgentIndex]} promptRunning={promptRunning} sendMessage={sendMessage} />
+            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile} agents={agents} currentAgentIndex={currentAgentIndex} setCurrentAgentIndex={setCurrentAgentIndexWrapper} addAgent={addAgent} />
+            <Home isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} agent={(agents.length === 0 || currentAgentIndex === undefined) ? undefined : agents[currentAgentIndex]} promptRunning={promptRunning} sendMessage={sendMessage} currentAgentIndex={currentAgentIndex} />
         </div>
     );
 };

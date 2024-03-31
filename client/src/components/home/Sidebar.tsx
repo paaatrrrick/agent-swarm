@@ -13,6 +13,7 @@ import {
 import constants from '@/helpers/constants';
 import { UserOrBool, StringAgentUndefined } from '@/types/user';
 import { Button } from '../ui/button';
+import clsx from 'clsx';
 
 interface SidebarInterface {
     isSidebarOpen: boolean,
@@ -20,10 +21,11 @@ interface SidebarInterface {
     profile: UserOrBool,
     agents: StringAgentUndefined[],
     currentAgentIndex: number | undefined,
-    setCurrentAgentIndex: (index: number) => void
+    setCurrentAgentIndex: (index: number) => void,
+    addAgent: () => void,
 }
 
-export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents, currentAgentIndex, setCurrentAgentIndex }: SidebarInterface) {
+export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents, currentAgentIndex, setCurrentAgentIndex, addAgent }: SidebarInterface) {
     return (
         <div className={`fixed inset-y-0 left-0 flex flex-col items-start justify-between
         w-64 bg-secondary z-20 transition-transform duration-300 ease-in-out p-2
@@ -37,11 +39,14 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                 </div>
                 <div className='mt-4 w-full gap-4 flex flex-col items-start justify-start'>
                     {agents.map((agent, index) => (
-                        <Button className='w-full' onClick={() => { setCurrentAgentIndex(index) }} key={index}>
+                        <Button className={clsx('w-full', currentAgentIndex === index && 'bg-purple-500 text-white hover:bg-purple-500 hover:text-white')} onClick={() => { setCurrentAgentIndex(index) }} key={index}>
                             <p className='mr-2'>Agent</p>#{index + 1}
                         </Button>
                     ))}
-                    <Button className='w-full border-2 bg-transparent text-primary border-primary hover:bg-offbackground'>
+                    {/* <Button className={clsx('w-full', currentAgentIndex === 1000 && 'bg-purple-500 text-white hover:bg-purple-500 hover:text-white')}>
+                        <p className='mr-2'>Agent</p>#{2 + 1}
+                    </Button> */}
+                    <Button className='w-full border-2 bg-transparent text-primary border-primary hover:bg-offbackground' onClick={addAgent}>
                         New Agent +
                     </Button>
                 </div>

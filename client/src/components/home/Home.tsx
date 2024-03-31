@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Icon from '../ui/icon'
 import clsx from 'clsx'
 import { Button } from '../ui/button'
@@ -7,6 +7,7 @@ import { Input } from '../ui/input'
 import { StringAgentUndefined } from '@/types/user';
 import Videoplayer from './Videoplayer';
 import { Loader } from '../Loader';
+import { set } from 'firebase/database';
 
 interface HomeInterface {
     isSidebarOpen: boolean;
@@ -14,16 +15,10 @@ interface HomeInterface {
     agent: StringAgentUndefined | undefined;
     promptRunning: boolean;
     sendMessage: (message: Object) => void;
+    currentAgentIndex: number | undefined;
 }
 
-export default function Home({ isSidebarOpen, toggleSidebar, agent, promptRunning, sendMessage }: HomeInterface) {
-    const [prompt, setPrompt] = useState<string>("");
-
-    const sendMessageWrapper = () => {
-        sendMessage({ message: prompt });
-        setPrompt("");
-    }
-
+export default function Home({ isSidebarOpen, toggleSidebar, agent, promptRunning, sendMessage, currentAgentIndex }: HomeInterface) {
     return (
         <>
             {/* Button to toggle sidebar from the main content area */}
@@ -37,7 +32,7 @@ export default function Home({ isSidebarOpen, toggleSidebar, agent, promptRunnin
                         <div className='h-full flex flex-col items-center justify-start w-[70%]'>
                             <h1 className='font-mono text-4xl mt-8 font-bold 2xl:text-6xl'>Agent Livestream</h1>
                             <Agent agent={agent} />
-                            <MessageInput sendMessage={sendMessageWrapper} promptRunning={promptRunning} />
+                            <MessageInput sendMessage={sendMessage} promptRunning={promptRunning} currentAgentIndex={currentAgentIndex} />
                         </div>
                     </div>
                 </div>
@@ -65,13 +60,28 @@ function Agent({ agent }: { agent: StringAgentUndefined | undefined }) {
     )
 }
 
-function MessageInput({ sendMessage, promptRunning }: { sendMessage: (message: Object) => void, promptRunning: boolean }) {
+interface MessageInputInterface {
+    sendMessage: (message: Object) => void;
+    promptRunning: boolean;
+    currentAgentIndex: number | undefined;
+}
+
+function MessageInput({ sendMessage, promptRunning, currentAgentIndex }: MessageInputInterface) {
     const [prompt, setPrompt] = useState<string>("");
+    const sendMessageWrapper = () => {
+        sendMessage({ message: prompt });
+        setPrompt("");
+    }
+
+
+    useEffect(() => {
+        setPrompt("");
+    }, [currentAgentIndex])
 
     return (
         <div className='flex flex-row items-start justify-start mt-8 w-full'>
             <Input type="text" value={prompt} onChange={(e) => { setPrompt(e.target.value) }} placeholder="Message" className='w-full border-border placeholder:font-mono' />
-            <Button type="submit" className='ml-3 font-mono' disabled={promptRunning} onClick={sendMessage}>Submit</Button>
+            <Button type="submit" className='ml-3 font-mono' disabled={promptRunning} onClick={sendMessageWrapper}>Submit</Button>
         </div>
     )
 }

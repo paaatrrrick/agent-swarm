@@ -53,6 +53,7 @@ export default class Api {
         db.on("error", console.error.bind(console, "connection error:"));
         db.once("open", () => {
             console.log("🍌 Mongo connection successful");
+            // manualProcess({userId: "6608ba56c49461a7ba7a2800", streamingLink: "http://45.56.104.109/hls/teststream.m3u8"})
             //AgentManagerClass.init();
         });
 

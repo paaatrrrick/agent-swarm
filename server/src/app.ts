@@ -53,8 +53,9 @@ export default class Api {
         db.on("error", console.error.bind(console, "connection error:"));
         db.once("open", () => {
             console.log("🍌 Mongo connection successful");
-            // manualProcess({userId: "6608ba56c49461a7ba7a2800", streamingLink: "http://45.56.104.109/hls/teststream.m3u8"})
-            //AgentManagerClass.init();
+            //GAUTAM DO THE FOLLOWING HERE (the id is correct but the streaming link and ip address are not correct)
+            //manualProcess({id: "6608de44e258f1dae436c7c2", streamingLink: "http://45.56.104.109/hls/teststream.m3u8", ipAddress: "http://18.205.241.120:8000"})
+            //put the streaming link and ip address in that format
         });
 
         const app = express();

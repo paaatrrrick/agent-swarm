@@ -54,7 +54,7 @@ export default class Api {
         db.once("open", () => {
             console.log("🍌 Mongo connection successful");
             //GAUTAM DO THE FOLLOWING HERE (the id is correct but the streaming link and ip address are not correct)
-            manualProcess({id: "6608de44e258f1dae436c7c2", streamingLink: "http://66.175.210.176/hls/teststream.m3u8", ipAddress: "http://35.175.17.101:8000"})
+            // manualProcess({id: "6608de44e258f1dae436c7c2", streamingLink: "http://66.175.210.176/hls/teststream.m3u8", ipAddress: "http://35.175.17.101:8000"})
             //put the streaming link and ip address in that format
         });
 

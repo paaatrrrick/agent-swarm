@@ -12,5 +12,5 @@ export interface Agent {
     streamingLink: string;
 }
 
-export type StringAgentUndefined = string | Agent | undefined;
+export type StringAgentUndefined = Agent;
 

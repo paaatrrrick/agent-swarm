@@ -11,15 +11,19 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import constants from '@/helpers/constants';
-import { UserOrBool } from '@/types/user';
+import { UserOrBool, StringAgentUndefined } from '@/types/user';
+import { Button } from '../ui/button';
 
-export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, selectedAgent, setSelectedAgent }: { isSidebarOpen: boolean, toggleSidebar: () => void, profile: UserOrBool, selectedAgent: string, setSelectedAgent: (agentName: string) => void }) {
-    const [agents, setAgents] = useState<string[]>(["Demo"]);
+interface SidebarInterface {
+    isSidebarOpen: boolean,
+    toggleSidebar: () => void,
+    profile: UserOrBool,
+    agents: StringAgentUndefined[],
+    currentAgentIndex: number | undefined,
+    setCurrentAgentIndex: (index: number) => void
+}
 
-    const addNewAgent = () => {
-        setAgents([...agents, "Untitled"]);
-    }
-
+export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents, currentAgentIndex, setCurrentAgentIndex }: SidebarInterface) {
     return (
         <div className={`fixed inset-y-0 left-0 flex flex-col items-start justify-between
         w-64 bg-secondary z-20 transition-transform duration-300 ease-in-out p-2
@@ -31,22 +35,15 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, selecte
                     <h3 className='font-mono text-xl'>Agent Swarm 🐝</h3>
                     <Icon type="hamburger" onClick={toggleSidebar} />
                 </div>
-                <div className='mt-4'>
+                <div className='mt-4 w-full gap-4 flex flex-col items-start justify-start'>
                     {agents.map((agent, index) => (
-                        <div
-                            key={index}
-                            className={`p-2 rounded-md cursor-pointer font-mono ${selectedAgent === agent ? 'bg-primary text-white' : 'bg-background hover:bg-gray-100'}`}
-                            onClick={() => setSelectedAgent(agent)}
-                        >
-                            {agent} ({index})
-                        </div>
+                        <Button className='w-full' onClick={() => { setCurrentAgentIndex(index) }} key={index}>
+                            <p className='mr-2'>Agent</p>#{index + 1}
+                        </Button>
                     ))}
-                    <button
-                        className='bg-primary text-white p-2 rounded-md mt-2 w-full font-mono'
-                        onClick={addNewAgent}
-                    >
-                        New Agent
-                    </button>
+                    <Button className='w-full border-2 bg-transparent text-primary border-primary hover:bg-offbackground'>
+                        New Agent +
+                    </Button>
                 </div>
             </div>
 

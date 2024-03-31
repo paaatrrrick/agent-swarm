@@ -27,13 +27,15 @@ AgentRouter.get('/getUsersAgent', Authenticate, catchAsync(async (req: RequestWi
         const agent = await Agent.findByIdAndUpdate(_id, { userId: user._id });
         await agent.save();
 
-        res.status(200).send({ agentID: _id.toString(), streamingLink });
+        res.status(200).send({agents: [{ agentID: _id.toString(), streamingLink }]});
         return;
     }
-
-    const agentID = user.agentIDs[0];
-    const agent = await Agent.findById(agentID);
-    res.status(200).send({ agentID : agent._id.toString(), streamingLink : agent.streamingLink });
+    const agents = []
+    for (let id of user.agentIDs) {
+        const agent = await Agent.findById(id);
+        agents.push({agentID: id, streamingLink: agent.streamingLink})
+    }
+    res.status(200).send({ agents });
 }));
 
 

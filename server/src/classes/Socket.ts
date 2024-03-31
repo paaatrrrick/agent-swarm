@@ -68,6 +68,7 @@ class WebSocketObject {
 
     async handleClose(uniqueID : string) : Promise<void> {
         const { agentID } = this.uniqueIDMap.get(uniqueID);
+        console.log('disconnected');
         this.uniqueIDMap.delete(uniqueID);
         const agent = this.agentIDMap.get(agentID);
         agent.uniqueIDs = agent.uniqueIDs.filter(id => id !== uniqueID);

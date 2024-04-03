@@ -1,7 +1,7 @@
 //@ts-nocheck
 
 import React from 'react'
-import VideoJS from './VideoJS';
+import VideoJS from '@/components/home/VideoJS';
 // This imports the functional component from the previous sample.
 
 const Videoplayer = ({ path }: { path: string }) => {

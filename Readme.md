@@ -1,3 +1,3 @@
-# Agent Swarm 🐝
+# Radah
 
-##### issues: auth, get credentials needs to be an await function
+Manage a fleet of general purpose VLM agents on virtual desktops

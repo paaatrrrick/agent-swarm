@@ -1,7 +1,7 @@
 //@ts-nocheck
 
 import React from 'react'
-import Videojs from './VideoJS';
+import Videojs from './Videojs';
 
 // This imports the functional component from the previous sample.
 

@@ -10,7 +10,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import constants from '@/helpers/constants';
 
 const navigation = [
-  { name: 'Profile', href: constants.routes.profile },
+  { name: 'Profile', href: constants.routes.dashboard },
 ]
 
 
@@ -18,7 +18,7 @@ type NavbarTypes = {
   profilePicture: string,
 }
 
-function Navbar({profilePicture} : NavbarTypes) {
+function Navbar({ profilePicture }: NavbarTypes) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <header className="bg-white">
@@ -47,10 +47,10 @@ function Navbar({profilePicture} : NavbarTypes) {
           </button>
         </div>
         <div className="hidden sm:ml-6 sm:flex sm:items-center">
-          <button className="inline-block rounded-lg px-2 py-1 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900" onClick={() => {signOut(fireBaseAuth)}}>
-              <p>Logout</p>
+          <button className="inline-block rounded-lg px-2 py-1 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900" onClick={() => { signOut(fireBaseAuth) }}>
+            <p>Logout</p>
           </button>
-        {profilePicture && <img className="h-10 w-10 rounded-full ml-6" src={profilePicture}  alt="Profile Picture"/>}
+          {profilePicture && <img className="h-10 w-10 rounded-full ml-6" src={profilePicture} alt="Profile Picture" />}
         </div>
       </nav>
       <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -91,7 +91,7 @@ function Navbar({profilePicture} : NavbarTypes) {
                 <a
                   href="#"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  onClick={() => {signOut(fireBaseAuth)}}
+                  onClick={() => { signOut(fireBaseAuth) }}
                 >
                   Logout
                 </a>
@@ -109,7 +109,7 @@ interface NavLinkProps {
   pathEnding: string,
 }
 
-const NavLink = ({name, pathEnding} : NavLinkProps) => {
+const NavLink = ({ name, pathEnding }: NavLinkProps) => {
   const currentUrl = usePathname();
   const lastTick = currentUrl.split('/').pop();
   if (lastTick !== pathEnding) {

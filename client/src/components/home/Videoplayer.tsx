@@ -1,12 +1,12 @@
 //@ts-nocheck
 
 import React from 'react'
-import VideoJS from '@/components/home/VideoJS';
+import Videojs from './VideoJS';
+
 // This imports the functional component from the previous sample.
 
 const Videoplayer = ({ path }: { path: string }) => {
     const playerRef = React.useRef(null);
-
     //live stream video from path http://45.56.104.109/hls/teststream.m3u8
     const videoJsOptions = {
         autoplay: true,
@@ -32,7 +32,7 @@ const Videoplayer = ({ path }: { path: string }) => {
         });
     };
 
-    return <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />;
+    return <Videojs options={videoJsOptions} onReady={handlePlayerReady} />;
 }
 
 

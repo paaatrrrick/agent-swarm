@@ -34,7 +34,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
             {/* top */}
             <div className='flex flex-col justify-start items-start w-full'>
                 <div className='w-full flex justify-between items-center'>
-                    <h3 className='font-mono text-xl'>Agent Swarm 🐝</h3>
+                    <h3 className='font-mono text-xl'>Radah.ai</h3>
                     <Icon type="hamburger" onClick={toggleSidebar} />
                 </div>
                 <div className='mt-4 w-full gap-4 flex flex-col items-start justify-start'>
@@ -43,9 +43,6 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                             <p className='mr-2'>Agent</p>#{index + 1}
                         </Button>
                     ))}
-                    {/* <Button className={clsx('w-full', currentAgentIndex === 1000 && 'bg-purple-500 text-white hover:bg-purple-500 hover:text-white')}>
-                        <p className='mr-2'>Agent</p>#{2 + 1}
-                    </Button> */}
                     <Button className='w-full border-2 bg-transparent text-primary border-primary hover:bg-offbackground' onClick={addAgent}>
                         New Agent +
                     </Button>

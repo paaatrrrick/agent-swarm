@@ -1,21 +1,27 @@
 import WebSocket, { RawData, WebSocketServer } from "ws";
 import axios from 'axios';
 import Agent from "../models/Agent";
+import WorkspaceConnection from "./WorkspaceConnection";
+import ClientConnection from "./ClientConnection";
 
-
-interface agentIDMetadata {
-    uniqueIDs: string[];
-    promptRunning: boolean;
-}
+type connectionType =  "client" | "workspace";
 
 interface uniqueIDMetadata {
-    agentID: string;
-    ws: WebSocket;
+    type: connectionType;
+    //if type is client then class is ClientConnection else WorkspaceConnection
+    connectionManager: ClientConnection | WorkspaceConnection;
 }
+
+interface threeWayHandshake {
+    clientUniqueID: string[];
+    workspaceUniqueID?: string;
+}
+
+
 
 class WebSocketObject {
     wss: WebSocketServer;
-    agentIDMap: Map<string, agentIDMetadata> = new Map();
+    agentIDMap: Map<string, threeWayHandshake> = new Map();
     uniqueIDMap: Map<string, uniqueIDMetadata> = new Map();
 
     constructor(server: any) {
@@ -39,89 +45,96 @@ class WebSocketObject {
             const type = data.type;
     
             if (type === 'config') {
-                const agentID = data.agentID;
-                this.uniqueIDMap.set(uniqueID, {agentID, ws});
-                if (this.agentIDMap.has(agentID)) {
-                    this.agentIDMap.get(agentID).uniqueIDs.push(uniqueID);
-                } else {
-                    this.agentIDMap.set(agentID, {uniqueIDs: [uniqueID], promptRunning: false});
+                const connectionType : connectionType = data.connectionType;
+                const { agentID } = data;
+
+                const agent = await Agent.findById(agentID);
+
+                if (!agent) {
+                    ws.send(JSON.stringify({type: 'error', message: 'agent not found'}));
+                    return;
                 }
-                this.sendMessageWithUniqueID(uniqueID, JSON.stringify({type: "config", ...this.agentIDMap.get(agentID)}));
-    
-            } else if (type === 'message') {
-                
-                const { message } = data;
-                const { agentID } = this.uniqueIDMap.get(uniqueID);
-    
-                this.agentIDMap.get(agentID).promptRunning = true;
-                this.sendMessageWithagentID(agentID, JSON.stringify({type: "config", ...this.agentIDMap.get(agentID)}));
-    
-                const res = await this.talkToagent(agentID, message)
-    
-                //set promptRunning to false
-                this.agentIDMap.get(agentID).promptRunning = false;
-                this.sendMessageWithagentID(agentID, JSON.stringify({type: "message", response: res}));
+
+                if (!this.agentIDMap.get(agentID)){
+                    this.agentIDMap.set(agentID, {clientUniqueID: []});
+                }
+
+                if (connectionType === "client") {
+                    const clientConnection : ClientConnection = new ClientConnection(ws, agentID, uniqueID, this);
+                    this.uniqueIDMap.set(uniqueID, {type: connectionType, connectionManager: clientConnection});
+                    this.agentIDMap.get(agentID).clientUniqueID.push(uniqueID);
+                    //@ts-ignore
+                    const promptRunning = this.uniqueIDMap.get(this.agentIDMap.get(agentID)?.workspaceUniqueID)?.connectionManager?.getPromptRunning() || false;
+                    clientConnection.sendMessage("config", {promptRunning: promptRunning});
+
+                } else if (connectionType === "workspace") {
+                    const { promptRunning } = data;
+                    const workspaceConnection = new WorkspaceConnection(ws, agentID, uniqueID, promptRunning, this);
+                    this.uniqueIDMap.set(uniqueID, {type: connectionType, connectionManager: workspaceConnection});
+                    this.agentIDMap.get(agentID).workspaceUniqueID = uniqueID;
+                }
+                return;
             }
+            this.uniqueIDMap.get(uniqueID)?.connectionManager?.handleMessage(data);
         } catch (error) {
             console.log(error);
         }
+    }
+
+
+    getClientConnections(agentID: string) : ClientConnection[] {
+        return this.agentIDMap.get(agentID)?.clientUniqueID.map(uniqueID => {
+            return this.uniqueIDMap.get(uniqueID)?.connectionManager as ClientConnection;
+        });
+    }
+
+    getWorkspaceConnection(agentID: string) : WorkspaceConnection | undefined { 
+        return this.agentIDMap.get(agentID)?.workspaceUniqueID ? this.uniqueIDMap.get(this.agentIDMap.get(agentID)?.workspaceUniqueID as string)?.connectionManager as WorkspaceConnection : undefined;
+    }
+
+    sendMessageToAllNeighborClients(agentID : string, type : string, message : any) {
+        const clientConnections = this.getClientConnections(agentID) || [];
+        clientConnections.forEach(clientConnection => {
+            //message get unwrapped in sendMessage
+            clientConnection.sendMessage(type, message);
+        });
     }
 
     async handleClose(uniqueID : string) : Promise<void> {
-        try {
-            const { agentID } = this.uniqueIDMap.get(uniqueID);
-            this.uniqueIDMap.delete(uniqueID);
-            const agent = this.agentIDMap.get(agentID);
-            agent.uniqueIDs = agent.uniqueIDs.filter(id => id !== uniqueID);
-            if (agent.uniqueIDs.length === 0) {
-                this.agentIDMap.delete(agentID);
+        this.uniqueIDMap.get(uniqueID)?.connectionManager?.handleClose();
+    }
+
+    async closeConnection(uniqueID : string) : Promise<void> {
+        const connectionManager = this.uniqueIDMap.get(uniqueID)?.connectionManager;
+        if (!connectionManager) return;
+
+        const agentID = connectionManager.agentID;
+        if (!this.agentIDMap.get(agentID).workspaceUniqueID) return;
+        
+
+        if (connectionManager instanceof ClientConnection) {
+            const clientUniqueID = this.agentIDMap.get(agentID)?.clientUniqueID;
+            if (clientUniqueID) {
+                this.agentIDMap.set(agentID, {clientUniqueID: clientUniqueID.filter(id => id !== uniqueID)});
             }
-        } catch (error) {
-            console.log(error);
-        }
-    }
+        } else if (connectionManager instanceof WorkspaceConnection) {
+            this.agentIDMap.get(agentID).workspaceUniqueID = undefined;
 
-    async sendMessageWithagentID(agentID : string, message : string) : Promise<void> {
-        try {
-            const agent = this.agentIDMap.get(agentID);
-            if (agent) {
-                agent.uniqueIDs.forEach(id => {
-                    this.uniqueIDMap.get(id).ws.send(message);
-                });
-            }
-        } catch (error) {
-            console.log(error);
         }
 
-    }
-
-    async sendMessageWithUniqueID(uniqueID : string, message : string) : Promise<void> {
-        try {
-            const ws = this.uniqueIDMap.get(uniqueID).ws;
-            ws.send(message);
-        } catch (error) {
+        //if workspaceUniqueID is undefined and clientUniqueID is empty then delete agentID from agentIDMap
+        if (!this.agentIDMap.get(agentID).workspaceUniqueID && this.agentIDMap.get(agentID).clientUniqueID.length === 0) {
+            this.agentIDMap.delete(agentID);
         }
-    }
-
-    async talkToagent(agentID : string, message : string) : Promise<string> {
-        try {
-            console.log(message);
-            const agent = await Agent.findById(agentID);
-            if (!agent) return "agent not found";
-    
-            const url : string = `${agent.ipAddress}/message`;
-            const data = {message: message, first: 1}
-            console.log(message);
-            const res = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
-            if (res.status !== 200) return "error";
-            return res.data;
-
-        } catch (error) {
-            return " internal error";
-        }
+        //remove from uniqueIDMap
+        this.uniqueIDMap.delete(uniqueID);
 
     }
 }
+
+
+
+
 
 
 export default WebSocketObject;

@@ -15,9 +15,10 @@ interface HomeInterface {
     promptRunning: boolean;
     sendMessage: (message: Object) => void;
     currentAgentIndex: number | undefined;
+    stopAgent: () => void;
 }
 
-export default function Home({ isSidebarOpen, toggleSidebar, agent, promptRunning, sendMessage, currentAgentIndex }: HomeInterface) {
+export default function Home({ isSidebarOpen, toggleSidebar, agent, promptRunning, sendMessage, currentAgentIndex, stopAgent }: HomeInterface) {
     return (
         <>
             {/* Button to toggle sidebar from the main content area */}
@@ -31,7 +32,7 @@ export default function Home({ isSidebarOpen, toggleSidebar, agent, promptRunnin
                         <div className='h-full flex flex-col items-center justify-start w-[70%]'>
                             <h1 className='font-mono text-4xl mt-8 font-bold 2xl:text-6xl'>Agent Livestream</h1>
                             <Agent agent={agent} />
-                            <MessageInput sendMessage={sendMessage} promptRunning={promptRunning} currentAgentIndex={currentAgentIndex} />
+                            <MessageInput sendMessage={sendMessage} promptRunning={promptRunning} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />
                         </div>
                     </div>
                 </div>
@@ -63,9 +64,10 @@ interface MessageInputInterface {
     sendMessage: (message: Object) => void;
     promptRunning: boolean;
     currentAgentIndex: number | undefined;
+    stopAgent: () => void;
 }
 
-function MessageInput({ sendMessage, promptRunning, currentAgentIndex }: MessageInputInterface) {
+function MessageInput({ sendMessage, promptRunning, currentAgentIndex, stopAgent }: MessageInputInterface) {
     const [prompt, setPrompt] = useState<string>("");
     const sendMessageWrapper = () => {
         sendMessage({ message: prompt });
@@ -80,7 +82,7 @@ function MessageInput({ sendMessage, promptRunning, currentAgentIndex }: Message
     return (
         <div className='flex flex-row items-start justify-start mt-8 w-full'>
             <Input type="text" value={prompt} onChange={(e) => { setPrompt(e.target.value) }} placeholder="Message" className='w-full border-border placeholder:font-mono' />
-            <Button type="submit" className='ml-3 font-mono' disabled={promptRunning} onClick={sendMessageWrapper}>Submit</Button>
+            <Button type="submit" className={clsx('ml-3 font-mono w-24', promptRunning && 'bg-red-400 text-white')} onClick={promptRunning ? stopAgent : sendMessageWrapper}>{promptRunning ? "Stop" : "Submit"}</Button>
         </div>
     )
 }

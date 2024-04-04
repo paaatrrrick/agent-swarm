@@ -12,7 +12,7 @@ const ScreenComponent = () => {
     const [profile, setProfile] = useState<UserOrBool>(false);
     const [currentAgentIndex, setCurrentAgentIndex] = useState<number | undefined>(undefined);
     const [agents, setAgents] = useState<StringAgentUndefined[]>([]);
-    const [promptRunning, setPromptRunning] = useState<boolean>(true);
+    const [promptRunning, setPromptRunning] = useState<boolean>(false);
     const [ws, setWS] = useState<WebSocket | null>(null);
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -66,6 +66,13 @@ const ScreenComponent = () => {
         }
     }
 
+    const stopAgent = (): void => {
+        if (ws) {
+            ws.send(JSON.stringify({ type: 'stop' }));
+            setPromptRunning(false);
+        }
+    }
+
     useEffect(() => {
         getAgent();
     }, []);
@@ -96,7 +103,7 @@ const ScreenComponent = () => {
     return (
         <div className="relative min-h-screen bg-background">
             <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile} agents={agents} currentAgentIndex={currentAgentIndex} setCurrentAgentIndex={setCurrentAgentIndexWrapper} addAgent={addAgent} />
-            <Home isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} agent={(agents.length === 0 || currentAgentIndex === undefined) ? undefined : agents[currentAgentIndex]} promptRunning={promptRunning} sendMessage={sendMessage} currentAgentIndex={currentAgentIndex} />
+            <Home isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} agent={(agents.length === 0 || currentAgentIndex === undefined) ? undefined : agents[currentAgentIndex]} promptRunning={promptRunning} sendMessage={sendMessage} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />
         </div>
     );
 };

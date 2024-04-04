@@ -9,8 +9,7 @@ import mongoose from 'mongoose';
 import AuthRouter from './routes/auth';
 import AgentManager from './classes/AgentManager';
 import AgentRouter from './routes/agent';
-import { Server as WebSocketServer } from 'ws'; // Import WebSocketServer
-import { manualProcess } from './methods/manualProcess';
+
 import WebSocketObject from './classes/Socket';
 
 
@@ -60,7 +59,7 @@ export default class Api {
 
         const app = express();
         app.use(bodyParser.json(), bodyParser.urlencoded({ extended: false }))
-        app.use(cors({credentials: true, origin: this.clientUrl}));
+        app.use(cors({credentials: true, origin: '*'}));
         app.use(cookieParser());
         app.use(`/auth`, AuthRouter);
         app.use(`/agent`, AgentRouter);

@@ -31,7 +31,7 @@ const ScreenComponent = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                setAgents([data.agents[0]]);
+                setAgents(data.agents);
                 setCurrentAgentIndex(0);
                 setupWebsocket(data.agents[0].agentID);
                 return

@@ -8,7 +8,7 @@ import { ThemeProvider } from '@/components/themeprovider'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: `Agent Swarm 🐝`,
+  title: `Radah`,
   description: 'Deploy an agent that autonomously controls a computer in the click of a button',
 }
 

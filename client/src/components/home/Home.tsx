@@ -7,7 +7,6 @@ import { Input } from '../ui/input'
 import { StringAgentUndefined } from '@/types/user';
 import Videoplayer from './Videoplayer';
 import { Loader } from '../Loader';
-import { set } from 'firebase/database';
 
 interface HomeInterface {
     isSidebarOpen: boolean;

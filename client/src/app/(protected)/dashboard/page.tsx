@@ -6,14 +6,11 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { fireBaseAuth, getAuthToken } from '@/helpers/firebase'
 import { UserOrBool, StringAgentUndefined } from '@/types/user';
 import constants from '@/helpers/constants';
-import { set } from 'firebase/database';
-
 
 const ScreenComponent = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [profile, setProfile] = useState<UserOrBool>(false);
     const [currentAgentIndex, setCurrentAgentIndex] = useState<number | undefined>(undefined);
-    const [toDeleteAgents, setToDeleteAgents] = useState<StringAgentUndefined[]>([]);
     const [agents, setAgents] = useState<StringAgentUndefined[]>([]);
     const [promptRunning, setPromptRunning] = useState<boolean>(true);
     const [ws, setWS] = useState<WebSocket | null>(null);
@@ -33,7 +30,6 @@ const ScreenComponent = () => {
             if (response.ok) {
                 const data = await response.json();
                 setAgents([data.agents[0]]);
-                setToDeleteAgents(data.agents);
                 setCurrentAgentIndex(0);
                 setupWebsocket(data.agents[0].agentID);
                 return
@@ -95,9 +91,6 @@ const ScreenComponent = () => {
     }
 
     const addAgent = async () => {
-        //wait half a second
-        await new Promise((resolve) => setTimeout(resolve, 250));
-        setAgents([...agents, toDeleteAgents[1]]);
     }
 
     return (

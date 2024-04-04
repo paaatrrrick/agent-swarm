@@ -8,8 +8,8 @@ import { ThemeProvider } from '@/components/themeprovider'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: `Agent Swarm 🐝`,
-  description: 'Deploy an agent that autonomously controls a computer in the click of a button',
+  title: `Radah.ai`,
+  description: 'Benchmark vision based agents',
 }
 
 export default function RootLayout({

@@ -1,6 +1,4 @@
-import WebSocket, { RawData, WebSocketServer } from "ws";
-import axios from 'axios';
-import Agent from "../models/Agent";
+import WebSocket from "ws";
 import WebSocketObject from "./Socket";
 
 class WorkspaceConnection {
@@ -23,11 +21,16 @@ class WorkspaceConnection {
     }
 
     setPromptRunning(promptrunning : boolean) : void {
+        console.log('');
+        console.log('setting prompt running');
+        console.log(promptrunning);
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: promptrunning});
         this.promptrunning = promptrunning;
     }
 
     async handleMessage(message : any) : Promise<void> {
+        console.log('workpsace is sending message');
+        console.log(message);
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', message);
     }
 

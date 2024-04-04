@@ -6,8 +6,10 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { fireBaseAuth, getAuthToken } from '@/helpers/firebase'
 import { UserOrBool, StringAgentUndefined } from '@/types/user';
 import constants from '@/helpers/constants';
+import { useError } from '@/context/ErrorContext';
 
 const ScreenComponent = () => {
+    const { setError } = useError();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [profile, setProfile] = useState<UserOrBool>(false);
     const [currentAgentIndex, setCurrentAgentIndex] = useState<number | undefined>(undefined);
@@ -40,44 +42,58 @@ const ScreenComponent = () => {
 
     const setupWebsocket = async (agentID: string) => {
         const newWS = new WebSocket(constants.websocketUrl);
-        newWS.onopen = () => {
-            newWS.send(JSON.stringify({ type: 'config', agentID }));
-        };
-        newWS.onmessage = (event) => {
+
+        const onOpen = () => { newWS.send(JSON.stringify({ type: 'config', agentID, connectionType: 'client' })); }
+
+
+        const handleMessage = (event: MessageEvent) => {
             const data = JSON.parse(event.data);
-            const { type } = data;
-            if (type === 'config') {
-                const { promptRunning } = data;
-                console.log('message with config information');
-                console.log(data);
-                setPromptRunning(promptRunning);
-            } else if (type === 'message') {
-                setPromptRunning(false);
-            }
-        };
+            console.log('');
+            console.log('incoming webscoket message');
+            console.log(data)
+            if (data.type === 'config') handleConfig(data);
+            if (data.type === 'message') handleInformation(data);
+            if (data.type === 'error') handleError(data);
+        }
+
+
+        const handleConfig = (data: any) => {
+            const { promptRunning, workspaceConnection } = data;
+            if (!workspaceConnection) setError({ primaryMessage: `Your Agent's Workspace is currently not running`, secondaryMessage: 'Conact gautamsharda001@gmail.com to get it back up. Sorry our infra dev was sick today!', timeout: 15000 })
+            // setPromptRunning(promptRunning || !workspaceConnection);
+            setPromptRunning(promptRunning);
+        }
+
+        const handleInformation = (data: any) => {
+            setPromptRunning(false);
+        }
+
+        const handleError = (data: any) => {
+            setError({ primaryMessage: data.message, secondaryMessage: data.secondaryMessage || '', timeout: 5000 });
+        }
+
+        newWS.onopen = onOpen;
+        newWS.onmessage = handleMessage;
         setWS(newWS);
         return () => newWS.close();
     }
 
     const sendMessage = (message: Object): void => {
         if (ws) {
-            ws.send(JSON.stringify({ type: 'message', ...message }));
+            ws.send(JSON.stringify({ type: 'prompt', ...message }));
             setPromptRunning(true);
         }
     }
 
     const stopAgent = (): void => {
         if (ws) {
-            ws.send(JSON.stringify({ type: 'stop' }));
+            ws.send(JSON.stringify({ type: 'terminate' }));
             setPromptRunning(false);
         }
     }
 
     useEffect(() => {
         getAgent();
-    }, []);
-
-    useEffect(() => {
         const unsubscribe = onAuthStateChanged(fireBaseAuth, (user) => {
             if (user) {
                 setProfile({ profilePicture: user.photoURL || '', name: user.displayName || '', email: user.email ? user.email.split('@')[0] + ' ...' : '' });
@@ -98,6 +114,7 @@ const ScreenComponent = () => {
     }
 
     const addAgent = async () => {
+
     }
 
     return (

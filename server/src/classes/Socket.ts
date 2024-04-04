@@ -1,5 +1,4 @@
 import WebSocket, { RawData, WebSocketServer } from "ws";
-import axios from 'axios';
 import Agent from "../models/Agent";
 import WorkspaceConnection from "./WorkspaceConnection";
 import ClientConnection from "./ClientConnection";
@@ -32,7 +31,7 @@ class WebSocketObject {
 
     init() {
         this.wss.on('connection', ws => {
-            console.log('connection');
+            console.log('new connection');
             const uniqueID = Math.random().toString(36).substring(7);
             ws.on('message', (message) => {this.handleMessage(message, ws, uniqueID)});
             ws.on('close', () => {this.handleClose(uniqueID)});
@@ -43,6 +42,9 @@ class WebSocketObject {
         try {
             const data = JSON.parse(message.toString());
             const type = data.type;
+            console.log('');
+            console.log('incoming message');
+            console.log(data);
     
             if (type === 'config') {
                 const connectionType : connectionType = data.connectionType;
@@ -64,8 +66,13 @@ class WebSocketObject {
                     this.uniqueIDMap.set(uniqueID, {type: connectionType, connectionManager: clientConnection});
                     this.agentIDMap.get(agentID).clientUniqueID.push(uniqueID);
                     //@ts-ignore
-                    const promptRunning = this.uniqueIDMap.get(this.agentIDMap.get(agentID)?.workspaceUniqueID)?.connectionManager?.getPromptRunning() || false;
-                    clientConnection.sendMessage("config", {promptRunning: promptRunning});
+                    const workspaceConnection : WorkspaceConnection | undefined = this.uniqueIDMap.get(this.agentIDMap.get(agentID)?.workspaceUniqueID)?.connectionManager;
+                    if (!workspaceConnection) {
+                        clientConnection.sendMessage("config", {promptRunning: false, workspaceConnection: false});
+                        return;
+                    }
+                    const promptRunning = workspaceConnection.getPromptRunning() || false;
+                    clientConnection.sendMessage("config", {promptRunning: promptRunning, workspaceConnection: true});
 
                 } else if (connectionType === "workspace") {
                     const { promptRunning } = data;

@@ -8,7 +8,7 @@ import { ThemeProvider } from '@/components/themeprovider'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: `Radah.ai`,
+  title: `Radah`,
   description: 'Benchmark vision based agents',
 }
 

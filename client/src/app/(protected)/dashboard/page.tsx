@@ -31,6 +31,8 @@ const ScreenComponent = () => {
             });
             if (response.ok) {
                 const data = await response.json();
+                //reverse order of data.agents
+                data.agents.reverse();
                 setAgents(data.agents);
                 setCurrentAgentIndex(0);
                 setupWebsocket(data.agents[0].agentID);
@@ -58,10 +60,9 @@ const ScreenComponent = () => {
 
 
         const handleConfig = (data: any) => {
-            const { promptRunning, workspaceConnection } = data;
+            const { workspaceConnection } = data;
             if (!workspaceConnection) setError({ primaryMessage: `Your Agent's Workspace is currently not running`, secondaryMessage: 'Conact gautamsharda001@gmail.com to get it back up. Sorry our infra dev was sick today!', timeout: 15000 })
-            // setPromptRunning(promptRunning || !workspaceConnection);
-            setPromptRunning(promptRunning);
+            setPromptRunning(data.promptRunning || !workspaceConnection);
         }
 
         const handleInformation = (data: any) => {
@@ -81,14 +82,12 @@ const ScreenComponent = () => {
     const sendMessage = (message: Object): void => {
         if (ws) {
             ws.send(JSON.stringify({ type: 'prompt', ...message }));
-            setPromptRunning(true);
         }
     }
 
     const stopAgent = (): void => {
         if (ws) {
             ws.send(JSON.stringify({ type: 'terminate' }));
-            setPromptRunning(false);
         }
     }
 
@@ -117,6 +116,9 @@ const ScreenComponent = () => {
 
     }
 
+    console.log('');
+    console.log('rendering');
+    console.log(promptRunning);
     return (
         <div className="relative min-h-screen bg-background">
             <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile} agents={agents} currentAgentIndex={currentAgentIndex} setCurrentAgentIndex={setCurrentAgentIndexWrapper} addAgent={addAgent} />

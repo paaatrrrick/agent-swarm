@@ -21,7 +21,7 @@ class ClientConnection {
     async handleMessage(data : any) : Promise<void> {
         const { type } = data;
         if (type === 'prompt') return await this.handlePromptMessage(data);
-        if (type === 'terminate') return await this.handleTerminate();
+        if (type === 'terminate') return await this.parent.getWorkspaceConnection(this.agentID)?.handleTerminate();
     }
 
     async sendMessage(type: string, message : any) : Promise<void> {
@@ -53,47 +53,14 @@ class ClientConnection {
 
         workspace.setPromptRunning(true);
 
-        const res = await this.talkToagent(message);    
+        const res = await this.parent.getWorkspaceConnection(this.agentID)?.talkToagent(message);    
         
+        if (workspace.getPromptRunning() === false) return;
+
         workspace.setPromptRunning(false);
 
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'message', {response: res});
     }
-
-
-    async handleTerminate() : Promise<void> {
-        try {
-            const agent = await Agent.findById(this.agentID);
-            if (!agent) return;
-    
-            const url : string = `${agent.ipAddress}/terminate`;
-            const res = await axios.get(url, {headers: {'Content-Type': 'application/json'}});
-            if (res.status !== 200) return;
-            return res.data;
-
-        } catch (error) {
-            return;
-        }
-    }
-
-    async talkToagent(message : string) : Promise<string> {
-        try {
-            console.log(message);
-            const agent = await Agent.findById(this.agentID);
-            if (!agent) return "agent not found";
-    
-            const url : string = `${agent.ipAddress}/message`;
-            const data = {message: message, first: 1}
-            console.log(message);
-            const res = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
-            if (res.status !== 200) return "error";
-            return res.data;
-
-        } catch (error) {
-            return " internal error";
-        }
-    }
-
 }
 
 

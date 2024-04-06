@@ -32,7 +32,7 @@ export default function Home({ isSidebarOpen, toggleSidebar, agent, promptRunnin
                         <div className='h-full flex flex-col items-center justify-start w-[70%]'>
                             <h1 className='font-mono text-4xl mt-8 font-bold 2xl:text-6xl'>Agent Livestream</h1>
                             <Agent agent={agent} />
-                            <MessageInput sendMessage={sendMessage} promptRunning={promptRunning} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />
+                            <MessageInput sendMessage={sendMessage} promptRunningFake={promptRunning} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />
                         </div>
                     </div>
                 </div>
@@ -62,12 +62,12 @@ function Agent({ agent }: { agent: StringAgentUndefined | undefined }) {
 
 interface MessageInputInterface {
     sendMessage: (message: Object) => void;
-    promptRunning: boolean;
+    promptRunningFake: boolean;
     currentAgentIndex: number | undefined;
     stopAgent: () => void;
 }
 
-function MessageInput({ sendMessage, promptRunning, currentAgentIndex, stopAgent }: MessageInputInterface) {
+function MessageInput({ sendMessage, promptRunningFake, currentAgentIndex, stopAgent }: MessageInputInterface) {
     const [prompt, setPrompt] = useState<string>("");
     const sendMessageWrapper = () => {
         sendMessage({ message: prompt });
@@ -82,7 +82,8 @@ function MessageInput({ sendMessage, promptRunning, currentAgentIndex, stopAgent
     return (
         <div className='flex flex-row items-start justify-start mt-8 w-full'>
             <Input type="text" value={prompt} onChange={(e) => { setPrompt(e.target.value) }} placeholder="Message" className='w-full border-border placeholder:font-mono' />
-            <Button type="submit" className={clsx('ml-3 font-mono w-24', promptRunning && 'bg-red-400 text-white')} onClick={promptRunning ? stopAgent : sendMessageWrapper}>{promptRunning ? "Stop" : "Submit"}</Button>
+            {!promptRunningFake && <Button type="submit" className='ml-3 font-mono w-24' onClick={sendMessageWrapper}>Submit</Button>}
+            {promptRunningFake && <Button type="submit" className='ml-3 font-mono w-24 bg-red-400 text-white' onClick={stopAgent}>Stop</Button>}
         </div>
     )
 }

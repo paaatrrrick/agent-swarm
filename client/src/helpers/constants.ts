@@ -28,7 +28,8 @@ interface Endpoints {
   googleSignUp: string;
   getAgent: string;
   getUsersAgent: string;
-  getAllAgents: string
+  getAllAgents: string;
+  addAgent: string;
 }
 
 
@@ -56,6 +57,7 @@ const constants : Constants = {
     getAgent: "/agent/getAgent",
     getUsersAgent: "/agent/getUsersAgent",
     getAllAgents: "/agent/getAllAgents",
+    addAgent: "/agent/addAgent",
   }
 };
 

@@ -11,6 +11,7 @@ import AgentManager from './classes/AgentManager';
 import AgentRouter from './routes/agent';
 
 import WebSocketObject from './classes/Socket';
+import { manualProcess } from './methods/manualProcess';
 
 
 const AgentManagerClass : AgentManager = new AgentManager();
@@ -53,8 +54,10 @@ export default class Api {
         db.once("open", () => {
             console.log("🍌 Mongo connection successful");
             //GAUTAM DO THE FOLLOWING HERE (the id is correct but the streaming link and ip address are not correct)
-            // manualProcess({id: "6608de44e258f1dae436c7c2", streamingLink: "http://66.175.210.176/hls/teststream.m3u8", ipAddress: "http://35.175.17.101:8000"})
+            //manualProcess({streamingLink: "http://66.175.210.176/hls/teststream.m3u8", ipAddress: "http://35.175.17.101:8000", completed: true, workspaceId: "THIS_IS_A_TEST_AGENT"});
             //put the streaming link and ip address in that format
+
+            AgentManagerClass.init();
         });
 
         const app = express();
@@ -75,25 +78,6 @@ export default class Api {
 
         websockObject = new WebSocketObject(server);
         websockObject.init();
-
-        // // WebSocket server setup
-    
-        // wss.on('connection', ws => {
-        //     console.log('WebSocket client connected');
-
-        //     sendMessageFunction = (message : string) => {
-        //         console.log('at new and improved sendMessageFunction');
-        //         ws.send(message);
-        //     }
-
-        //     ws.on('message', message => {
-        //         console.log(`Received message => ${message}`);
-        //         ws.send(`Hello, you sent -> ${message}`);
-        //     });
-        //     ws.on('close', () => {
-        //         console.log('WebSocket client disconnected');
-        //     });
-        // });
     }
 }
 

@@ -38,6 +38,28 @@ AgentRouter.get('/getUsersAgent', Authenticate, catchAsync(async (req: RequestWi
     res.status(200).send({ agents });
 }));
 
+AgentRouter.get('/addAgent', Authenticate, catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    //for each agentID in user.agentIDs make an array of agents with their agentID and streamingLink
+    const agents = []
+    for (let id of user.agentIDs) {
+        const agent = await Agent.findById(id);
+        agents.push({agentID: id, streamingLink: agent.streamingLink})
+    }
+
+    const { streamingLink, _id } = await AgentManagerClass.getAgent();
+    user.agentIDs.push(_id.toString());
+    await user.save();
+
+    //set the agent userID to the user by using findByIdAndUpdate
+    const agent = await Agent.findByIdAndUpdate(_id, { userId: user._id });
+    await agent.save();
+
+    agents.push({ agentID: _id.toString(), streamingLink });
+    res.status(200).send({ agents });
+}));
+
 
 
 export default AgentRouter;

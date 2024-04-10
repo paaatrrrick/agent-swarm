@@ -1,6 +1,4 @@
 import WebSocket from "ws";
-import axios from 'axios';
-import Agent from "../models/Agent";
 import WebSocketObject from "./Socket";
 import WorkspaceConnection from "./WorkspaceConnection";
 
@@ -26,7 +24,7 @@ class ClientConnection {
 
     async sendMessage(type: string, message : any) : Promise<void> {
         try {
-            this.ws.send(JSON.stringify({type: type, ...message}));
+            this.ws.send(JSON.stringify({...message, type: type}));
         } catch (error) {
         }
     }

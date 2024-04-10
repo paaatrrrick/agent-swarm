@@ -124,3 +124,8 @@
   max-width: 600px;
   min-width: min(95%, 120px);
 }
+
+.hideScrollBar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}

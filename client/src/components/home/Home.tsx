@@ -10,7 +10,9 @@ import { Loader } from '../Loader';
 
 interface HomeInterface {
     isSidebarOpen: boolean;
+    isRightSidebarOpen: boolean;
     toggleSidebar: () => void;
+    toggleRightSidebar: () => void;
     agent: StringAgentUndefined | undefined;
     promptRunning: boolean;
     sendMessage: (message: Object) => void;
@@ -18,7 +20,8 @@ interface HomeInterface {
     stopAgent: () => void;
 }
 
-export default function Home({ isSidebarOpen, toggleSidebar, agent, promptRunning, sendMessage, currentAgentIndex, stopAgent }: HomeInterface) {
+export default function Home({ isSidebarOpen, isRightSidebarOpen, toggleSidebar, toggleRightSidebar, agent, promptRunning, sendMessage, currentAgentIndex, stopAgent }: HomeInterface) {
+    console.log(isRightSidebarOpen);
     return (
         <>
             {/* Button to toggle sidebar from the main content area */}
@@ -26,7 +29,11 @@ export default function Home({ isSidebarOpen, toggleSidebar, agent, promptRunnin
                 <Icon type="hamburger" onClick={toggleSidebar} hideBorder={true} />
                 {/* {(agent && typeof agent !== "string") && <p className='font-mono text-2xl text-red-500'>We have agent {JSON.stringify(agent)}</p>} */}
             </div>
-            <div className={`flex-1 min-h-screen transition-margin duration-300 ease-in-out ${isSidebarOpen ? "ml-64" : "ml-0"}`}>
+            <div className={clsx(isRightSidebarOpen && 'hidden', 'absolute top-4 right-4 z-10 duration-200')}>
+                <Icon type="EnvelopeOpenIcon" onClick={toggleRightSidebar} hideBorder={true} />
+                {/* {(agent && typeof agent !== "string") && <p className='font-mono text-2xl text-red-500'>We have agent {JSON.stringify(agent)}</p>} */}
+            </div>
+            <div className={`flex-1 min-h-screen transition-margin duration-300 ease-in-out ${isSidebarOpen ? "ml-64" : "ml-0"} ${isRightSidebarOpen ? "mr-64" : "mr-0"}`}>
                 <div className='w-full h-full flex flex-col items-center justify-start'>
                     <div className='w-full h-full flex flex-col items-center justify-start'>
                         <div className='h-full flex flex-col items-center justify-start w-[70%]'>

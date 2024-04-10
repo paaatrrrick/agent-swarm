@@ -70,6 +70,7 @@ class WorkspaceConnection {
             const url : string = `${agent.ipAddress}/message`;
             const data = {message: message, first: 1}
             console.log(message);
+            console.log(url);
             const res = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
             this.setPromptRunning(false);
             if (res.status !== 200) return "error";

@@ -8,19 +8,43 @@ import { UserOrBool, StringAgentUndefined } from '@/types/user';
 import constants from '@/helpers/constants';
 import { useError } from '@/context/ErrorContext';
 import { useLoader } from '@/context/LoaderContext';
-import { set } from 'firebase/database';
+import Rightsidebar from '@/components/home/Rightsidebar';
+import AgentMessage from '@/types/websocket';
+import { handleIncomingWorkspaceStatus } from '@/helpers/workspaceStatus';
+
+const dummyData = [
+    { "role": "user", "type": "message", "content": "What's 2380*3875?" },
+
+    { "role": "assistant", "type": "code", "format": "python", "content": "2380*3875" },
+
+    { "role": "computer", "type": "console", "format": "output", "content": "9222500" },
+
+    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
+    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
+    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
+    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
+    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
+    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
+    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
+    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
+    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
+    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
+]
 
 const ScreenComponent = () => {
     const { setError } = useError();
     const { setLoading } = useLoader();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
     const [profile, setProfile] = useState<UserOrBool>(false);
     const [currentAgentIndex, setCurrentAgentIndex] = useState<number | undefined>(undefined);
     const [agents, setAgents] = useState<StringAgentUndefined[]>([]);
     const [promptRunning, setPromptRunning] = useState<boolean>(false);
     const [ws, setWS] = useState<WebSocket | null>(null);
+    const [agentMessages, setAgentMessages] = useState<AgentMessage[]>([]);
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+    const toggleRightSidebar = () => setIsRightSidebarOpen(!isRightSidebarOpen);
 
 
     const getAgent = async (): Promise<void> => {
@@ -80,6 +104,7 @@ const ScreenComponent = () => {
             console.log(data)
             if (data.type === 'config') handleConfig(data);
             if (data.type === 'message') handleInformation(data);
+            if (data.type === 'workspaceStatus') handleWorkspaceStatus(data);
             if (data.type === 'error') handleError(data);
         }
 
@@ -96,6 +121,14 @@ const ScreenComponent = () => {
 
         const handleError = (data: any) => {
             setError({ primaryMessage: data.message, secondaryMessage: data.secondaryMessage || '', timeout: 5000 });
+        }
+
+        const handleWorkspaceStatus = (data: any) => {
+            const type: string = data.type;
+            const content: AgentMessage = data.content;
+            console.log('handle workspace status');
+            const workspaceMessages = handleIncomingWorkspaceStatus(content, agentMessages);
+            setAgentMessages(workspaceMessages);
         }
 
         newWS.onopen = onOpen;
@@ -138,11 +171,13 @@ const ScreenComponent = () => {
     }
 
 
+    console.log(agentMessages);
 
     return (
         <div className="relative min-h-screen bg-background">
             <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile} agents={agents} currentAgentIndex={currentAgentIndex} setCurrentAgentIndex={setCurrentAgentIndexWrapper} addAgent={addAgent} />
-            <Home isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} agent={(agents.length === 0 || currentAgentIndex === undefined) ? undefined : agents[currentAgentIndex]} promptRunning={promptRunning} sendMessage={sendMessage} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />
+            <Home isSidebarOpen={isSidebarOpen} isRightSidebarOpen={isRightSidebarOpen} toggleSidebar={toggleSidebar} toggleRightSidebar={toggleRightSidebar} agent={(agents.length === 0 || currentAgentIndex === undefined) ? undefined : agents[currentAgentIndex]} promptRunning={promptRunning} sendMessage={sendMessage} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />
+            <Rightsidebar isSidebarOpen={isRightSidebarOpen} toggleSidebar={toggleRightSidebar} agentMessages={agentMessages} />
         </div>
     );
 };

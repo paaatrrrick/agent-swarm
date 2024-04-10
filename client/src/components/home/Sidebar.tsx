@@ -28,7 +28,7 @@ interface SidebarInterface {
 export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents, currentAgentIndex, setCurrentAgentIndex, addAgent }: SidebarInterface) {
     return (
         <div className={`fixed inset-y-0 left-0 flex flex-col items-start justify-between
-        w-64 bg-secondary z-20 transition-transform duration-300 ease-in-out p-2
+        w-64 bg-secondary z-20 transition-transform duration-300 ease-in-out p-4
         transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
         `}>
             {/* top */}

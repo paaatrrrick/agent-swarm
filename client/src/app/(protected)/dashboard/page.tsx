@@ -124,10 +124,8 @@ const ScreenComponent = () => {
         }
 
         const handleWorkspaceStatus = (data: any) => {
-            const type: string = data.type;
-            const content: AgentMessage = data.content;
             console.log('handle workspace status');
-            const workspaceMessages = handleIncomingWorkspaceStatus(content, agentMessages);
+            const workspaceMessages = handleIncomingWorkspaceStatus(data, agentMessages);
             setAgentMessages(workspaceMessages);
         }
 

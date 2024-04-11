@@ -46,7 +46,7 @@ class WorkspaceConnection {
             if (!agent) return;
             console.log(this.agentID);
     
-            const url : string = `${agent.ipAddress}/terminate`;
+            const url : string = `${agent.ipAddress}/stop`;
             this.setPromptRunning(false);
             const res = await axios.get(url, {headers: {'Content-Type': 'application/json'}});
             

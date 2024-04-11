@@ -168,9 +168,6 @@ const ScreenComponent = () => {
         setupWebsocket(agents[index].agentID);
     }
 
-
-    console.log(agentMessages);
-
     return (
         <div className="relative min-h-screen bg-background">
             <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile} agents={agents} currentAgentIndex={currentAgentIndex} setCurrentAgentIndex={setCurrentAgentIndexWrapper} addAgent={addAgent} />

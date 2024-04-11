@@ -10,6 +10,7 @@ interface AgentMessage {
     content: string;
     start? : string
     end? : string
+    completed? : boolean
 }
 
 export default AgentMessage;

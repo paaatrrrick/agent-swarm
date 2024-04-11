@@ -6,8 +6,13 @@ const handleIncomingWorkspaceStatus = (incoming : AgentMessage, current : AgentM
         delete incoming.start
         incoming.content = "";
         current.push(incoming)
-    } else if (!incoming.end && incoming.content) {
+    } else if (current.length === 0 || current[current.length - 1].completed) {
+        current.push(incoming);
+    } else if (incoming.content) {
         current[current.length - 1].content += incoming.content;
+    }   
+    if (incoming.end) {
+        current[current.length - 1].completed = true;
     }
 
 

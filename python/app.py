@@ -48,14 +48,18 @@ def on_open(ws):
     print("### connected ###")
     ws.send(json.dumps({ "type": "config", "promptRunning": False, "agentID": "6608de44e258f1dae436c7c2", "connectionType": "workspace"}))
     #every 5 seconds send a message to the Client
-    time.sleep(5)
-    # while True:
-    #     sendMessageToClient(ws, {"messages": [{"message": count}]})
-    #     count += 1
-    print('going to send')
-    for chunk in interpreter.chat("What's 2 + 2", stream=True, display=False):
-        print(chunk)
-        sendMessageToClient(ws, {"content" : chunk, "type": "message"})
+    i = 1
+    while True:
+        time.sleep(1)
+        if i == 1:
+            sendMessageToClient(ws, {"role": "assistant", "content": ""})
+
+        sendMessageToClient(ws, {"role": [{"message": count}]})
+        count += 1
+    # print('going to send')
+    # for chunk in interpreter.chat("What's 2 + 2", stream=True, display=False):
+    #     print(chunk)
+    #     sendMessageToClient(ws, {"content" : chunk, "type": "message"})
 
 def websocket_thread(queue):
     def run(*args):

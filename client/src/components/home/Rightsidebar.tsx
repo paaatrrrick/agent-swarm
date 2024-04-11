@@ -43,7 +43,7 @@ export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessag
 
     return (
         <div className={`fixed inset-y-0 right-0 flex flex-col items-start justify-between
-        w-64 bg-secondary z-20 transition-transform duration-300 ease-in-out p-4
+        w-72 bg-secondary z-20 transition-transform duration-300 ease-in-out p-4
         transform ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}
         `}>
 
@@ -84,24 +84,24 @@ function UserMessage({ role, type, format, content }: AgentMessage) {
 
 
 function AssistantMessage({ role, type, format, content }: AgentMessage) {
-
-
-    if (type === "code") {
+    if (format === "python" || format === "javascript") {
         return (
-            <div className='flex flex-col items-start justify-start text-sm font-mono border border-primary rounded-sm'>
-                <div className='w-full text-sm font-mono hidden dark:flex dark:flex-col dark:items-start dark:justify-start '>
+            <div className='flex flex-col items-start justify-start text-sm font-mono border border-primary rounded-sm w-full'>
+                <div className='w-full text-sm font-mono hidden dark:flex dark:flex-col dark:items-start dark:justify-start'>
                     <CodeBlock
                         text={content}
                         language={format}
-                        showLineNumbers={true}
+                        showLineNumbers={false}
+                        wrapLongLines={true}
                         theme={dracula}
                     />
                 </div>
-                <div className='flex flex-col items-start justify-start w-full text-sm font-mono dark:hidden bor'>
+                <div className='flex flex-col items-start justify-start text-sm font-mono dark:hidden w-full'>
                     <CodeBlock
                         text={content}
                         language={format}
-                        showLineNumbers={true}
+                        showLineNumbers={false}
+                        wrapLongLines={true}
                         theme={googlecode}
                     />
                 </div>

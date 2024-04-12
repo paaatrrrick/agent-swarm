@@ -46,7 +46,7 @@ export const Videojs = (props) => {
     }, [playerRef]);
 
     return (
-        <div data-vjs-player className='dark:border-2 dark:border-primary dark:rounded-sm'>
+        <div data-vjs-player className='dark:border-2 dark:border-primary dark:rounded-md'>
             <div ref={videoRef} />
         </div>
     );

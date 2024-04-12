@@ -28,7 +28,7 @@ export default function Page() {
       <div
         className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/3 flex flex-col items-start justify-start gap-8 w-[1000px]"
       >
-        <h1 className='font-extrabold	text-white text-6xl'>Benchmarking Vision AI Agents</h1>
+        <h1 className='font-extrabold	text-white text-6xl'>Benchmarking AI Vision Agents</h1>
         <p className='text-white text-lg font-mono'>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Inventore ullam, neque eum accusantium iste hic ea voluptate iure nostrum commodi libero, architecto blanditiis incidunt corrupti esse dolorum, corporis dignissimos magnam?</p>
         <div className="flex">
           <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none " onClick={() => { window.location.href = constants.routes.dashboard }}>

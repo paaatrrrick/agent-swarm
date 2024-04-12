@@ -26,7 +26,7 @@ export default function Page() {
         <div className='text-4xl font-bold text-center'>
           Welcome to Home
         </div>
-        <Button onClick={() => { window.location.href = constants.routes.dashboard }}>Go To Agent Screen</Button>
+        <Button onClick={() => { window.location.href = constants.routes.dashboard }}>Go To Agent Screen (Radah is under construction! If you're here, you should probably DM me on Twitter @gautam_sharda_.</Button>
 
         {typeof profile === "object" &&
           <div className='w-sm flex items-center rounded-sm border-border border mt-2 mb-2 px-4 py-2 hover:cursor-pointer'>

@@ -18,9 +18,10 @@ interface HomeInterface {
     sendMessage: (message: Object) => void;
     currentAgentIndex: number | undefined;
     stopAgent: () => void;
+    workspaceConnection: boolean;
 }
 
-export default function Home({ isSidebarOpen, isRightSidebarOpen, toggleSidebar, toggleRightSidebar, agent, promptRunning, sendMessage, currentAgentIndex, stopAgent }: HomeInterface) {
+export default function Home({ isSidebarOpen, isRightSidebarOpen, toggleSidebar, toggleRightSidebar, agent, promptRunning, workspaceConnection, sendMessage, currentAgentIndex, stopAgent }: HomeInterface) {
     return (
         <>
             {/* Button to toggle sidebar from the main content area */}
@@ -37,8 +38,8 @@ export default function Home({ isSidebarOpen, isRightSidebarOpen, toggleSidebar,
                     <div className='w-full h-full flex flex-col items-center justify-start'>
                         <div className='h-full flex flex-col items-center justify-start w-[70%]'>
                             <h1 className='font-mono text-4xl mt-8 font-bold 2xl:text-6xl'>Agent Livestream</h1>
-                            <Agent agent={agent} />
-                            <MessageInput sendMessage={sendMessage} promptRunningFake={promptRunning} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />
+                            <Agent agent={workspaceConnection ? agent : undefined} />
+                            <MessageInput sendMessage={sendMessage} promptRunning={promptRunning} workspaceConnection={workspaceConnection} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />
                         </div>
                     </div>
                 </div>
@@ -68,12 +69,13 @@ function Agent({ agent }: { agent: StringAgentUndefined | undefined }) {
 
 interface MessageInputInterface {
     sendMessage: (message: Object) => void;
-    promptRunningFake: boolean;
+    promptRunning: boolean;
     currentAgentIndex: number | undefined;
     stopAgent: () => void;
+    workspaceConnection: boolean;
 }
 
-function MessageInput({ sendMessage, promptRunningFake, currentAgentIndex, stopAgent }: MessageInputInterface) {
+function MessageInput({ sendMessage, promptRunning, currentAgentIndex, stopAgent, workspaceConnection }: MessageInputInterface) {
     const [prompt, setPrompt] = useState<string>("");
     const sendMessageWrapper = () => {
         sendMessage({ message: prompt });
@@ -85,11 +87,12 @@ function MessageInput({ sendMessage, promptRunningFake, currentAgentIndex, stopA
         setPrompt("");
     }, [currentAgentIndex])
 
+    if (!workspaceConnection) return <></>
     return (
         <div className='flex flex-row items-start justify-start mt-8 w-full'>
             <Input type="text" value={prompt} onChange={(e) => { setPrompt(e.target.value) }} placeholder="Message" className='w-full border-border placeholder:font-mono' />
-            {!promptRunningFake && <Button type="submit" className='ml-3 font-mono w-24' onClick={sendMessageWrapper}>Submit</Button>}
-            {promptRunningFake && <Button type="submit" className='ml-3 font-mono w-24 bg-red-400 text-white' onClick={stopAgent}>Stop</Button>}
+            {!promptRunning && <Button type="submit" className='ml-3 font-mono w-24' onClick={sendMessageWrapper}>Submit</Button>}
+            {promptRunning && <Button type="submit" className='ml-3 font-mono w-24 bg-red-400 text-white' onClick={stopAgent}>Stop</Button>}
         </div>
     )
 }

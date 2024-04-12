@@ -40,6 +40,7 @@ const ScreenComponent = () => {
     const [currentAgentIndex, setCurrentAgentIndex] = useState<number | undefined>(undefined);
     const [agents, setAgents] = useState<StringAgentUndefined[]>([]);
     const [promptRunning, setPromptRunning] = useState<boolean>(false);
+    const [workspaceConnection, setWorkspaceConnection] = useState<boolean>(false);
     const [ws, setWS] = useState<WebSocket | null>(null);
     const [agentMessages, setAgentMessages] = useState<AgentMessage[]>(dummyData);
 
@@ -103,20 +104,17 @@ const ScreenComponent = () => {
             console.log('incoming webscoket message');
             console.log(data)
             if (data.type === 'config') handleConfig(data);
-            if (data.type === 'message') handleInformation(data);
             if (data.type === 'workspaceStatus') handleWorkspaceStatus(data);
             if (data.type === 'error') handleError(data);
         }
 
 
         const handleConfig = (data: any) => {
-            const { workspaceConnection } = data;
+            const { workspaceConnection, promptRunning } = data;
+            if (data.successAlert) setError({ primaryMessage: 'workspace connection has been found', timeout: 5000, type: 'success' });
             if (!workspaceConnection) setError({ primaryMessage: `Your Agent's Workspace is currently not running`, secondaryMessage: 'Conact gautamsharda001@gmail.com to get it back up. Sorry our infra dev was sick today!', timeout: 15000 })
-            setPromptRunning(data.promptRunning || !workspaceConnection);
-        }
-
-        const handleInformation = (data: any) => {
-            setPromptRunning(false);
+            setPromptRunning(promptRunning);
+            setWorkspaceConnection(workspaceConnection);
         }
 
         const handleError = (data: any) => {
@@ -163,7 +161,9 @@ const ScreenComponent = () => {
     const setCurrentAgentIndexWrapper = (index: number): void => {
         if (currentAgentIndex === index) return
         ws?.close()
-        setPromptRunning(true)
+        setPromptRunning(false)
+        setWorkspaceConnection(false)
+        setError(undefined);
         setWS(null)
         setCurrentAgentIndex(index)
         setupWebsocket(agents[index].agentID);
@@ -172,7 +172,7 @@ const ScreenComponent = () => {
     return (
         <div className="relative min-h-screen bg-background">
             <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile} agents={agents} currentAgentIndex={currentAgentIndex} setCurrentAgentIndex={setCurrentAgentIndexWrapper} addAgent={addAgent} />
-            <Home isSidebarOpen={isSidebarOpen} isRightSidebarOpen={isRightSidebarOpen} toggleSidebar={toggleSidebar} toggleRightSidebar={toggleRightSidebar} agent={(agents.length === 0 || currentAgentIndex === undefined) ? undefined : agents[currentAgentIndex]} promptRunning={promptRunning} sendMessage={sendMessage} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />
+            <Home isSidebarOpen={isSidebarOpen} isRightSidebarOpen={isRightSidebarOpen} toggleSidebar={toggleSidebar} toggleRightSidebar={toggleRightSidebar} agent={(agents.length === 0 || currentAgentIndex === undefined) ? undefined : agents[currentAgentIndex]} promptRunning={promptRunning} workspaceConnection={workspaceConnection} sendMessage={sendMessage} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />
             <Rightsidebar isSidebarOpen={isRightSidebarOpen} toggleSidebar={toggleRightSidebar} agentMessages={agentMessages} />
         </div>
     );

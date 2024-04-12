@@ -28,12 +28,12 @@ interface ErrorContextInput {
 
 const ErrorContext = createContext({
     error: undefined as ErrorContextProps | undefined,
-    setError: (error: ErrorContextInput) => {},
+    setError: (error: ErrorContextInput | undefined) => { },
 });
-  
-  export const useError = () => useContext(ErrorContext);
-  
-  export const ErrorProvider = ({ children } : LayoutProps) => {
+
+export const useError = () => useContext(ErrorContext);
+
+export const ErrorProvider = ({ children }: LayoutProps) => {
     const [error, setError] = useState<ErrorContextProps | undefined>(undefined);
     const [timeoutId, setTimeoutId] = useState<number | undefined>(undefined);
 
@@ -54,13 +54,19 @@ const ErrorContext = createContext({
         setTimeoutId(undefined);
     }
 
-    const setErrorWrapper = ({primaryMessage, secondaryMessage, timeout, type} : ErrorContextInput) => {
-        setError({primaryMessage : primaryMessage || 'Oops, we ran into an error', secondaryMessage: secondaryMessage || '', timeout: timeout || constants.errorTimeout, type: type || 'error'});
+    const setErrorWrapper = (error: ErrorContextInput | undefined) => {
+
+        if (!error) {
+            clearError();
+            return;
+        }
+        const { primaryMessage, secondaryMessage, timeout, type } = error;
+        setError({ primaryMessage: primaryMessage || 'Oops, we ran into an error', secondaryMessage: secondaryMessage || '', timeout: timeout || constants.errorTimeout, type: type || 'error' });
     }
 
     return (
-      <ErrorContext.Provider value={{ error, setError : setErrorWrapper }}>
-        {children}
-      </ErrorContext.Provider>
+        <ErrorContext.Provider value={{ error, setError: setErrorWrapper }}>
+            {children}
+        </ErrorContext.Provider>
     );
 };

@@ -18,6 +18,10 @@ class WorkspaceConnection {
         this.promptrunning = promptrunning;
     }
 
+    init() {
+        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: false, workspaceConnection : true, successAlert: true});   
+    }
+
     getPromptRunning() : boolean {
         return this.promptrunning;
     }
@@ -39,6 +43,7 @@ class WorkspaceConnection {
     }
 
     async handleClose() {
+        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: this.promptrunning, workspaceConnection : false});
         this.parent.closeConnection(this.uniqueID);
     }
 

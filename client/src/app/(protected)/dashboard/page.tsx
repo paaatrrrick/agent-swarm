@@ -42,7 +42,7 @@ const ScreenComponent = () => {
     const [promptRunning, setPromptRunning] = useState<boolean>(false);
     const [workspaceConnection, setWorkspaceConnection] = useState<boolean>(false);
     const [ws, setWS] = useState<WebSocket | null>(null);
-    const [agentMessages, setAgentMessages] = useState<AgentMessage[]>([]);
+    const [agentMessages, setAgentMessages] = useState<AgentMessage[]>(dummyData);
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
     const toggleRightSidebar = () => setIsRightSidebarOpen(!isRightSidebarOpen);

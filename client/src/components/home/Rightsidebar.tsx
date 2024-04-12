@@ -81,7 +81,7 @@ export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessag
 }
 
 
-const messageClassnames = 'flex flex-col items-start justify-start w-full rounded-sm bg-background border py-2 px-2 gap-2 border-2'
+const messageClassnames = 'flex flex-col items-start justify-start w-full rounded-sm bg-primary-foreground border py-2 px-2 gap-2 border-2'
 const textClassnames = 'text-xs font-mono'
 const h6Classnames = 'text-sm font-mono'
 const defaultCodeStyles = 'text-xs font-mono border border-primary rounded-sm w-full border-2'

@@ -22,7 +22,7 @@ export default function Page() {
   }, []);
 
   return (
-    <div className='w-full h-full bg-primary'>
+    <div className='w-full h-full bg-primary dark:bg-primary-foreground'>
       <BackgroundBeams />
       {/*absolutely position to center a div */}
       <div
@@ -33,7 +33,7 @@ export default function Page() {
         <div className="flex">
           <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none " onClick={() => { window.location.href = constants.routes.dashboard }}>
             <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-            <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-primary px-8 py-1 text-md font-lg text-white backdrop-blur-3xl font-mono">
+            <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-primary dark:bg-primary-foreground px-8 py-1 text-md font-lg text-white backdrop-blur-3xl font-mono">
               Get in touch
             </span>
           </button>

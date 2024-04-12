@@ -31,7 +31,11 @@ class WorkspaceConnection {
     async handleMessage(message : any) : Promise<void> {
         console.log('workpsace is sending message');
         console.log(message);
-        this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', message);
+        if (message.sender && message.sender === 'client') {
+            this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : message.payload});
+            return;
+        }
+        this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : [message]});
     }
 
     async handleClose() {

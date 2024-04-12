@@ -35,7 +35,7 @@ class ClientConnection {
 
     //websocket message handlers
     async handlePromptMessage(data : any) : Promise<void> {
-        const { message } = data;
+        const message : string = data.message;
         const workspace : WorkspaceConnection | undefined = this.parent.getWorkspaceConnection(this.agentID);
         if (!workspace) {
             this.sendMessage('error', {message: 'There is no workspace connection found', secondaryMessage: 'Please contact gautamsharda001@gmail.com'});
@@ -51,13 +51,18 @@ class ClientConnection {
 
         workspace.setPromptRunning(true);
 
+        this.parent.getWorkspaceConnection(this.agentID)?.handleMessage({"sender": "client", 
+        "payload" : [
+            { "role": "user", "type": "message", start: true },
+            { "role": "user", "type": "message", "content": message },
+            { "role": "user", "type": "message", end: true },
+        ]})
+
         const res = await this.parent.getWorkspaceConnection(this.agentID)?.talkToagent(message);    
         
         if (workspace.getPromptRunning() === false) return;
 
         workspace.setPromptRunning(false);
-
-        this.parent.sendMessageToAllNeighborClients(this.agentID, 'message', {response: res});
     }
 }
 

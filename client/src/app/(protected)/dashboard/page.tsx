@@ -14,11 +14,8 @@ import { handleIncomingWorkspaceStatus } from '@/helpers/workspaceStatus';
 
 const dummyData = [
     { "role": "user", "type": "message", "content": "What's 2380*3875?" },
-
     { "role": "assistant", "type": "code", "format": "python", "content": "2380*3875" },
-
     { "role": "computer", "type": "console", "format": "output", "content": "9222500" },
-
     { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
     { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
     { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
@@ -125,7 +122,8 @@ const ScreenComponent = () => {
 
         const handleWorkspaceStatus = (data: any) => {
             console.log('handle workspace status');
-            const workspaceMessages = handleIncomingWorkspaceStatus(data, agentMessages);
+            const payload: AgentMessage[] = data.payload;
+            const workspaceMessages = handleIncomingWorkspaceStatus(payload, agentMessages);
             setAgentMessages(workspaceMessages);
         }
 

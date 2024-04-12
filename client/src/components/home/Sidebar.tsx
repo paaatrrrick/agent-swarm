@@ -40,7 +40,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                 <hr className='w-full border-primary border-1 mt-4' />
                 <div className='mt-4 w-full gap-4 flex flex-col items-start justify-start'>
                     {agents.map((agent, index) => (
-                        <Button className={clsx('w-full', currentAgentIndex === index && 'bg-purple-500 text-white hover:bg-purple-500 hover:text-white')} onClick={() => { setCurrentAgentIndex(index) }} key={index}>
+                        <Button className={clsx('w-full', currentAgentIndex === index && 'bg-purple-500 text-white hover:bg-purple-600')} onClick={() => { setCurrentAgentIndex(index) }} key={index}>
                             <p className='mr-2'>Agent</p>#{index + 1}
                         </Button>
                     ))}
@@ -63,7 +63,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild className='hover:cursor-pointer bg-secondary hover:bg-background'>
                             <div className='w-full flex items-center rounded-sm border-border border mt-2 mb-2 px-4 h-16 hover:cursor-pointer'>
-                                <div className="flex items-center justify-center">
+                                <div className="flex items-center justify-center m-0">
                                     <img src={profile.profilePicture} alt="Profile Picture" className="h-10 w-10 rounded-full" />
                                 </div>
                                 <div className='ml-4'>

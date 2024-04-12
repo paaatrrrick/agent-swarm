@@ -103,9 +103,9 @@ function MessageInput({ sendMessage, promptRunning, currentAgentIndex, stopAgent
     if (!workspaceConnection) return <></>
     return (
         <div className='flex flex-row items-start justify-start mt-8 w-full'>
-            <Input type="text" value={prompt} onChange={(e) => { setPrompt(e.target.value) }} placeholder="Message" className='w-full border-border placeholder:font-mono' />
-            {!promptRunning && <Button type="submit" className='ml-3 font-mono w-24' onClick={sendMessageWrapper}>Submit</Button>}
-            {promptRunning && <Button type="submit" className='ml-3 font-mono w-24 bg-red-400 text-white' onClick={stopAgent}>Stop</Button>}
+            <Input type="text" value={prompt} onChange={(e) => { setPrompt(e.target.value) }} placeholder="Prompt interpreter" className='w-full border-border border-2 text-md font-mono placeholder:font-mono h-12 dark:border-white' />
+            {!promptRunning && <Button type="submit" className='ml-3 font-mono w-24 h-12 text-lg bg-purple-500 dark:text-white hover:bg-purple-600' onClick={sendMessageWrapper}>Submit</Button>}
+            {promptRunning && <Button type="submit" className='ml-3 font-mono w-24 bg-red-400 text-white h-12' onClick={stopAgent}>Stop</Button>}
         </div>
     )
 }

@@ -22,6 +22,19 @@ interface HomeInterface {
 }
 
 export default function Home({ isSidebarOpen, isRightSidebarOpen, toggleSidebar, toggleRightSidebar, agent, promptRunning, workspaceConnection, sendMessage, currentAgentIndex, stopAgent }: HomeInterface) {
+
+
+
+    // (isRightSidebarOpen || isSidebarOpen) && 'w-[75%]', (isRightSidebarOpen && isSidebarOpen) && 'w-[95%]', !(isRightSidebarOpen || isSidebarOpen) && 'w-[65%]')
+    var screenWidth = 'w-[65%]'
+    if (isRightSidebarOpen || isSidebarOpen) {
+        screenWidth = 'w-[75%]'
+    }
+    if (isRightSidebarOpen && isSidebarOpen) {
+        screenWidth = 'w-[95%]'
+    }
+
+
     return (
         <>
             {/* Button to toggle sidebar from the main content area */}
@@ -36,7 +49,7 @@ export default function Home({ isSidebarOpen, isRightSidebarOpen, toggleSidebar,
             <div className={`flex-1 min-h-screen transition-margin duration-300 ease-in-out ${isSidebarOpen ? "ml-64" : "ml-0"} ${isRightSidebarOpen ? "mr-96" : "mr-0"}`}>
                 <div className='w-full h-full flex flex-col items-center justify-start'>
                     <div className='w-full h-full flex flex-col items-center justify-start'>
-                        <div className='h-full flex flex-col items-center justify-start w-[70%]'>
+                        <div className={clsx('w-[90%] max-w-[130vh] flex flex-col items-center justify-start')}>
                             <h1 className='font-mono text-4xl mt-8 font-bold 2xl:text-6xl'>Agent Livestream</h1>
                             <Agent agent={workspaceConnection ? agent : undefined} />
                             <MessageInput sendMessage={sendMessage} promptRunning={promptRunning} workspaceConnection={workspaceConnection} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />

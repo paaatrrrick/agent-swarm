@@ -47,7 +47,7 @@ export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessag
 
     return (
         <div className={`fixed inset-y-0 right-0 flex flex-col items-start justify-between
-        w-96 bg-secondary z-20 transition-transform duration-300 ease-in-out p-4
+        w-96 bg-secondary z-20 transition-transform duration-300 ease-in-out px-4 pt-4
         transform ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}
         `}>
 
@@ -55,15 +55,21 @@ export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessag
             <div className='flex flex-col justify-start items-start w-full mb-4'>
                 <div className='w-full flex justify-between items-center'>
                     <div className="flex items-center">
-                        <h3 className='font-mono text-lg'>Messages</h3>
+                        <h3 className='font-mono text-xl'>Messages</h3>
                         <h3 className='font-mono text-2xl ml-3'>🤖</h3>
                     </div>
                     <Icon type="Cross1Icon" onClick={toggleSidebar} />
                 </div>
+                <hr className='w-full border-primary border-1 mt-4' />
             </div>
 
 
-            <div className='flex-1 w-full gap-4 flex items-start flex-col justify-start overflow-y-scroll hideScrollBar pb-16 pt-8'>
+            {reducedMessages.length === 0 &&
+                <p className='font-mono'>Run a prompt to see messages appear</p>
+            }
+
+            <div className='flex-1 w-full gap-4 flex items-start flex-col justify-start overflow-y-scroll hideScrollBar pb-16'>
+
                 {reducedMessages.map((message, index) => {
                     // @ts-ignore
                     const Component = typeToComponent[message.role]
@@ -75,7 +81,7 @@ export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessag
 }
 
 
-const messageClassnames = 'flex flex-col items-start justify-start w-full rounded-sm bg-background border border-primary py-2 px-2 gap-2 border-2'
+const messageClassnames = 'flex flex-col items-start justify-start w-full rounded-sm bg-background border py-2 px-2 gap-2 border-2'
 const textClassnames = 'text-xs font-mono'
 const h6Classnames = 'text-sm font-mono'
 const defaultCodeStyles = 'text-xs font-mono border border-primary rounded-sm w-full border-2'

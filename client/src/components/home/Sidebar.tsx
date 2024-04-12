@@ -37,6 +37,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                     <h3 className='font-mono text-xl'>Radah.ai</h3>
                     <Icon type="hamburger" onClick={toggleSidebar} />
                 </div>
+                <hr className='w-full border-primary border-1 mt-4' />
                 <div className='mt-4 w-full gap-4 flex flex-col items-start justify-start'>
                     {agents.map((agent, index) => (
                         <Button className={clsx('w-full', currentAgentIndex === index && 'bg-purple-500 text-white hover:bg-purple-500 hover:text-white')} onClick={() => { setCurrentAgentIndex(index) }} key={index}>

@@ -32,7 +32,7 @@ export default function Home({ isSidebarOpen, isRightSidebarOpen, toggleSidebar,
                 <Icon type="EnvelopeOpenIcon" onClick={toggleRightSidebar} hideBorder={true} />
                 {/* {(agent && typeof agent !== "string") && <p className='font-mono text-2xl text-red-500'>We have agent {JSON.stringify(agent)}</p>} */}
             </div>
-            <div className={`flex-1 min-h-screen transition-margin duration-300 ease-in-out ${isSidebarOpen ? "ml-64" : "ml-0"} ${isRightSidebarOpen ? "mr-72" : "mr-0"}`}>
+            <div className={`flex-1 min-h-screen transition-margin duration-300 ease-in-out ${isSidebarOpen ? "ml-64" : "ml-0"} ${isRightSidebarOpen ? "mr-96" : "mr-0"}`}>
                 <div className='w-full h-full flex flex-col items-center justify-start'>
                     <div className='w-full h-full flex flex-col items-center justify-start'>
                         <div className='h-full flex flex-col items-center justify-start w-[70%]'>

@@ -38,12 +38,16 @@ const typeToComponent = {
 export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessages }: SidebarInterface) {
 
     //remove all agentMessges where the role is not user, assistant, or computer
-    const reducedMessages = agentMessages.filter((message) => { return message.role === "user" || message.role === "assistant" || message.role === "computer" })
+    var reducedMessages = agentMessages.filter((message) => { return message.role === "user" || message.role === "assistant" || message.role === "computer" })
+
+
+    //remove all messages where message.content is undefined or an empty string
+    reducedMessages = reducedMessages.filter((message) => { return message.content !== undefined && message.content !== "" })
 
 
     return (
         <div className={`fixed inset-y-0 right-0 flex flex-col items-start justify-between
-        w-72 bg-secondary z-20 transition-transform duration-300 ease-in-out p-4
+        w-96 bg-secondary z-20 transition-transform duration-300 ease-in-out p-4
         transform ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}
         `}>
 
@@ -71,12 +75,16 @@ export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessag
 }
 
 
-const messageClassnames = 'flex flex-col items-start justify-start w-full rounded-sm bg-background border border-primary'
-const textClassnames = 'text-primary py-1 px-2 text-sm'
+const messageClassnames = 'flex flex-col items-start justify-start w-full rounded-sm bg-background border border-primary py-2 px-2 gap-2 border-2'
+const textClassnames = 'text-xs font-mono'
+const h6Classnames = 'text-sm font-mono'
+const defaultCodeStyles = 'text-xs font-mono border border-primary rounded-sm w-full border-2'
+
 
 function UserMessage({ role, type, format, content }: AgentMessage) {
     return (
-        <div className={clsx(messageClassnames)}>
+        <div className={clsx(messageClassnames, 'border-green-500')}>
+            <h6 className={clsx(h6Classnames)}>User Message: 🤨</h6>
             <p className={clsx(textClassnames)}>{content}</p>
         </div>
     )
@@ -84,10 +92,11 @@ function UserMessage({ role, type, format, content }: AgentMessage) {
 
 
 function AssistantMessage({ role, type, format, content }: AgentMessage) {
-    if (format === "python" || format === "javascript") {
+    if (format === "python" || format === "javascript" || type === "code") {
         return (
-            <div className='flex flex-col items-start justify-start text-sm font-mono border border-primary rounded-sm w-full'>
-                <div className='w-full text-sm font-mono hidden dark:flex dark:flex-col dark:items-start dark:justify-start'>
+            <>
+                <div className={clsx(defaultCodeStyles, 'hidden dark:flex dark:flex-col dark:items-start dark:justify-start bg-[#282b36]')}>
+                    <p className='italic ml-2 mt-2'>{format}</p>
                     <CodeBlock
                         text={content}
                         language={format}
@@ -96,7 +105,8 @@ function AssistantMessage({ role, type, format, content }: AgentMessage) {
                         theme={dracula}
                     />
                 </div>
-                <div className='flex flex-col items-start justify-start text-sm font-mono dark:hidden w-full'>
+                <div className={clsx(defaultCodeStyles, 'flex flex-col items-start justify-start dark:hidden bg-white')}>
+                    <p className='italic ml-2 mt-2'>{format}</p>
                     <CodeBlock
                         text={content}
                         language={format}
@@ -105,11 +115,12 @@ function AssistantMessage({ role, type, format, content }: AgentMessage) {
                         theme={googlecode}
                     />
                 </div>
-            </div>
+            </>
         )
     }
     return (
-        <div className={clsx(messageClassnames)}>
+        <div className={clsx(messageClassnames, 'border-blue-500')}>
+            <h6 className={clsx(h6Classnames)}>Assistant: 🔧</h6>
             <p className={clsx(textClassnames)}>{content}</p>
         </div>
     )
@@ -117,7 +128,8 @@ function AssistantMessage({ role, type, format, content }: AgentMessage) {
 
 function ComputerMessage({ role, type, format, content }: AgentMessage) {
     return (
-        <div className={clsx(messageClassnames)}>
+        <div className={clsx(messageClassnames, 'border-purple-500')}>
+            <h6 className={clsx(h6Classnames)}>Computer: 🖥</h6>
             <p className={clsx(textClassnames)}>{content}</p>
         </div>
     )

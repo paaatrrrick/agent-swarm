@@ -67,7 +67,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                                 </div>
                                 <div className='ml-4'>
                                     <p className='font-mono text-sm'>{profile.name}</p>
-                                    <p className='font-mono text-xs'>{profile.email.slice(0, 18)}...</p>
+                                    <p className='font-mono text-xs'>{profile.email.slice(0, 14)}...</p>
                                 </div>
                             </div>
                         </DropdownMenuTrigger>

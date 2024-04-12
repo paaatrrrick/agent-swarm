@@ -15,17 +15,20 @@ import { handleIncomingWorkspaceStatus } from '@/helpers/workspaceStatus';
 const dummyData = [
     { "role": "user", "type": "message", "content": "What's 2380*3875?" },
     { "role": "assistant", "type": "code", "format": "python", "content": "2380*3875" },
+    {
+        "role": "assistant", "type": "code", "format": "javascript", "content": `const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
+    const [profile, setProfile] = useState<UserOrBool>(false);
+    const [currentAgentIndex, setCurrentAgentIndex] = useState<number | undefined>(undefined);
+    const [agents, setAgents] = useState<StringAgentUndefined[]>([]);
+    const [promptRunning, setPromptRunning] = useState<boolean>(false);
+    const [ws, setWS] = useState<WebSocket | null>(null);
+    const [agentMessages, setAgentMessages] = useState<AgentMessage[]>([]);` },
+    { "role": "assistant", "type": "code", "format": "python", "content": "2380*3875" },
     { "role": "computer", "type": "console", "format": "output", "content": "9222500" },
     { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
     { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
-    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
-    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
-    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
-    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
-    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
-    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
-    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
-    { "role": "assistant", "type": "message", "content": "The result of multiplying 2380 by 3875 is 9222500." },
+
 ]
 
 const ScreenComponent = () => {
@@ -38,7 +41,7 @@ const ScreenComponent = () => {
     const [agents, setAgents] = useState<StringAgentUndefined[]>([]);
     const [promptRunning, setPromptRunning] = useState<boolean>(false);
     const [ws, setWS] = useState<WebSocket | null>(null);
-    const [agentMessages, setAgentMessages] = useState<AgentMessage[]>([]);
+    const [agentMessages, setAgentMessages] = useState<AgentMessage[]>(dummyData);
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
     const toggleRightSidebar = () => setIsRightSidebarOpen(!isRightSidebarOpen);

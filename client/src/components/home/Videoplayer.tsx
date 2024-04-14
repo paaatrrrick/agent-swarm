@@ -3,7 +3,7 @@ import React from 'react'
 import Videojs from './Videojs';
 
 // This imports the functional component from the previous sample.
-const Videoplayer = React.memo(({ path }) => {
+const Videoplayer = React.memo(({ path }: { path: string }) => {
     const playerRef = React.useRef(null);
     const videoJsOptions = {
         autoplay: true,

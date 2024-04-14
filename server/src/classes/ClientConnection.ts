@@ -50,13 +50,15 @@ class ClientConnection {
         }
 
         workspace.setPromptRunning(true);
-
+        console.log('send to neighbors');
         this.parent.getWorkspaceConnection(this.agentID)?.handleMessage({"sender": "client", 
         "payload" : [
             { "role": "user", "type": "message", start: true },
             { "role": "user", "type": "message", "content": message },
             { "role": "user", "type": "message", end: true },
         ]})
+
+        console.log('send to neighbors 2.0');
 
         const res = await this.parent.getWorkspaceConnection(this.agentID)?.talkToagent(message);    
         

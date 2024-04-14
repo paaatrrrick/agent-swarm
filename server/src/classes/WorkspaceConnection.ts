@@ -70,6 +70,7 @@ class WorkspaceConnection {
     }
 
     async talkToagent(message : string) : Promise<string> {
+        console.log('talking to agent in workspace connection top')
         try {
             console.log('talking to agent in workspace connection');
             console.log(message);
@@ -77,7 +78,7 @@ class WorkspaceConnection {
             if (!agent) return "agent not found";
     
             const url : string = `${agent.ipAddress}/message`;
-            const data = {message: message, first: 1}
+            const data = {message: message, first: 0}
             console.log(message);
             console.log(url);
             const res = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});

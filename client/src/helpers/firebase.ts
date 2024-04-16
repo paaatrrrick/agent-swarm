@@ -34,8 +34,11 @@ const getAuthToken = async () : Promise<String> => {
     }
 }
 
-
-const SignUpWithGooglePopUp = async (setError : (msg : string) => void) => {
+//const SignUpWithGooglePopUp = async (setError, onSuccess) => {
+const SignUpWithGooglePopUp = async (
+    setError : (msg : string) => void,
+    onSuccess? : () => void
+) => {
     try {
         const result = await signInWithPopup(fireBaseAuth, GoogleProvider);
         const user = result.user;
@@ -53,6 +56,7 @@ const SignUpWithGooglePopUp = async (setError : (msg : string) => void) => {
         if (!response.ok) {
             throw new Error('Error authenticating with Google');
         }
+        if (onSuccess) onSuccess();
     } catch (error) {
         setError(`Error authenticating with Google`)
     }

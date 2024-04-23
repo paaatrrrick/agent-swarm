@@ -80,4 +80,22 @@ AgentRouter.post('/requestAgent', Authenticate, catchAsync(async (req: RequestWi
     res.status(200).send({ message: "Request sent" });
 }));
 
+
+//get endpoint with id in query param. Get all messages from the agent and return them
+AgentRouter.get('/getMessages', Authenticate, catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const { agentID } = req.query;
+    if (!agentID) {
+        res.status(400).send({ message: "Agent ID is required" });
+        return;
+    }
+    //todo: make sure the agentID belongs to the user
+    const agent = await Agent.findById(agentID);
+    if (!agent) {
+        res.status(400).send({ message: "Agent not found" });
+        return;
+    }
+    res.status(200).send({ messages: agent.messages || [] });
+}));
+
+
 export default AgentRouter;

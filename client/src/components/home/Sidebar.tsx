@@ -36,10 +36,10 @@ interface SidebarInterface {
     agents: StringAgentUndefined[],
     currentAgentIndex: number | undefined,
     setCurrentAgentIndex: (index: number) => void,
-    addAgent: () => void,
+    // addAgent: () => void,
 }
 
-export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents, currentAgentIndex, setCurrentAgentIndex, addAgent }: SidebarInterface) {
+export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents, currentAgentIndex, setCurrentAgentIndex }: SidebarInterface) {
     const [requestAgentTextArea, setRequestAgentTextAre] = useState<string>("")
     const { setError } = useError();
 

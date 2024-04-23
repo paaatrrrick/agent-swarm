@@ -18,4 +18,5 @@ export interface AgentType {
     inUse: boolean,
     complete: boolean,
     ipAddress?: string,
+    messages?: any[],
 }

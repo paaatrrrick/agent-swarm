@@ -13,6 +13,31 @@ import AgentMessage from '@/types/websocket';
 import { handleIncomingWorkspaceStatus } from '@/helpers/workspaceStatus';
 
 
+// const addAgent = async () => {
+//     try {
+//         setLoading({ text: 'Adding a new agent' });
+//         const token = await getAuthToken();
+//         const response = await fetch(constants.serverUrl + constants.endpoints.addAgent, {
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'authorization': `Bearer ${token}`,
+//             },
+//         });
+//         if (response.ok) {
+//             setLoading(false);
+//             const data = await response.json();
+//             setAgents(data.agents);
+//             const index = data.agents.length - 1;
+//             setCurrentAgentIndexFetch(index);
+//             setupWebsocket(data.agents[index].agentID);
+//             return
+//         }
+//     } catch (error) {
+//         setLoading(false);
+//     }
+// }
+
+
 const dummyData = [
     { "role": "user", "type": "message", "content": "What's 2380*3875?" },
     { "role": "assistant", "type": "code", "format": "python", "content": "2380*3875" },
@@ -49,47 +74,37 @@ const ScreenComponent = () => {
     const toggleRightSidebar = () => setIsRightSidebarOpen(!isRightSidebarOpen);
 
 
-    const getAgent = async (): Promise<void> => {
-        try {
-            const token = await getAuthToken();
-            const response = await fetch(constants.serverUrl + constants.endpoints.getUsersAgent, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'authorization': `Bearer ${token}`,
-                },
-            });
-            if (response.ok) {
-                const data = await response.json();
-                setAgents(data.agents);
-                setCurrentAgentIndex(0);
-                setupWebsocket(data.agents[0].agentID);
-                return
-            }
-        } catch (error) {
+    const setCurrentAgentIndexFetch = async (index: number, paramAgentID: string | undefined): Promise<void> => {
+        if (currentAgentIndex === index) return
+        setCurrentAgentIndex(index)
+        if (!paramAgentID && (index + 1 > agents.length || !agents[index].agentID)) return
+        const agentID = paramAgentID || agents[index].agentID;
+        const url = constants.serverUrl + constants.endpoints.getAgentMessages + `?agentID=${agentID}`;
+        const token = await getAuthToken();
+        const response = await fetch(url, { headers: { 'Content-Type': 'application/json', 'authorization': `Bearer ${token}` } });
+        if (response.ok) {
+            const data = await response.json();
+            const messages = data.messages;
+            const workspaceMessages = handleIncomingWorkspaceStatus(messages, []);
+            setAgentMessages(workspaceMessages);
         }
     }
 
-    const addAgent = async () => {
-        try {
-            setLoading({ text: 'Adding a new agent' });
-            const token = await getAuthToken();
-            const response = await fetch(constants.serverUrl + constants.endpoints.addAgent, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'authorization': `Bearer ${token}`,
-                },
-            });
-            if (response.ok) {
-                setLoading(false);
-                const data = await response.json();
-                setAgents(data.agents);
-                const index = data.agents.length - 1;
-                setCurrentAgentIndex(index);
-                setupWebsocket(data.agents[index].agentID);
-                return
-            }
-        } catch (error) {
-            setLoading(false);
+
+    const getAgent = async (): Promise<void> => {
+        const token = await getAuthToken();
+        const response = await fetch(constants.serverUrl + constants.endpoints.getUsersAgent, {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${token}`,
+            },
+        });
+        if (response.ok) {
+            const data = await response.json();
+            setAgents(data.agents);
+            setCurrentAgentIndexFetch(0, data.agents.length > 0 ? data.agents[0].agentID : undefined);
+            setupWebsocket(data.agents[0].agentID);
+            return
         }
     }
 
@@ -136,15 +151,11 @@ const ScreenComponent = () => {
     }
 
     const sendMessage = (message: Object): void => {
-        if (ws) {
-            ws.send(JSON.stringify({ type: 'prompt', ...message }));
-        }
+        if (ws) ws.send(JSON.stringify({ type: 'prompt', ...message }));
     }
 
     const stopAgent = (): void => {
-        if (ws) {
-            ws.send(JSON.stringify({ type: 'terminate' }));
-        }
+        if (ws) ws.send(JSON.stringify({ type: 'terminate' }));
     }
 
     useEffect(() => {
@@ -166,13 +177,13 @@ const ScreenComponent = () => {
         setWorkspaceConnection(false)
         setError(undefined);
         setWS(null)
-        setCurrentAgentIndex(index)
+        setCurrentAgentIndexFetch(index, undefined)
         setupWebsocket(agents[index].agentID);
     }
 
     return (
         <div className="relative min-h-screen bg-background">
-            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile} agents={agents} currentAgentIndex={currentAgentIndex} setCurrentAgentIndex={setCurrentAgentIndexWrapper} addAgent={addAgent} />
+            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} profile={profile} agents={agents} currentAgentIndex={currentAgentIndex} setCurrentAgentIndex={setCurrentAgentIndexWrapper} />
             <Home isSidebarOpen={isSidebarOpen} isRightSidebarOpen={isRightSidebarOpen} toggleSidebar={toggleSidebar} toggleRightSidebar={toggleRightSidebar} agent={(agents.length === 0 || currentAgentIndex === undefined) ? undefined : agents[currentAgentIndex]} promptRunning={promptRunning} workspaceConnection={workspaceConnection} sendMessage={sendMessage} currentAgentIndex={currentAgentIndex} stopAgent={stopAgent} />
             <Rightsidebar isSidebarOpen={isRightSidebarOpen} toggleSidebar={toggleRightSidebar} agentMessages={agentMessages} />
         </div>

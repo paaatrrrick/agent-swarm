@@ -33,13 +33,24 @@ class WorkspaceConnection {
     }
 
     async handleMessage(message : any) : Promise<void> {
-        console.log('workpsace is sending message');
-        console.log(message);
+        const agent = await Agent.findById(this.agentID);
         if (message.sender && message.sender === 'client') {
             this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : message.payload});
+
+            //concat message.payload to agent.messages
+            if (agent) {
+                agent.messages = agent.messages.concat(message.payload);
+                await agent.save();
+            }
+
             return;
         }
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : [message]});
+        if (agent) {
+            agent.messages = agent.messages.concat([message]);
+            await agent.save();
+        }
+
     }
 
     async handleClose() {

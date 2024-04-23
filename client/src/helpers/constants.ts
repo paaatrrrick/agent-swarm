@@ -31,6 +31,7 @@ interface Endpoints {
   getAllAgents: string;
   requestAgent: string;
   addAgent: string;
+  getAgentMessages: string;
 }
 
 
@@ -60,6 +61,7 @@ const constants : Constants = {
     getAllAgents: "/agent/getAllAgents",
     addAgent: "/agent/addAgent",
     requestAgent: "/agent/requestAgent",
+    getAgentMessages: "/agent/getMessages",
   }
 };
 

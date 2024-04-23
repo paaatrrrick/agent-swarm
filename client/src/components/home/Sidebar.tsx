@@ -102,7 +102,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                             </div>
                             <DialogFooter>
                                 <DialogClose asChild>
-                                    <Button type="submit" className='bg-purple-500 hover:bg-purple-600' onClick={submitRequestAgent}
+                                    <Button type="submit" className='bg-purple-500 hover:bg-purple-600 text-white' onClick={submitRequestAgent}
                                         disabled={requestAgentTextArea.length <= 10}
                                     >Submit</Button>
                                 </DialogClose>

@@ -7,6 +7,7 @@ import { RequestWithUser } from '../types/apiTypes';
 import { AgentManagerClass } from '../app';
 import { Authenticate } from '../methods/middleware';
 import Agent from '../models/Agent';
+import { sendEmail } from '../methods/helpers';
 const AgentRouter = express.Router();
 
 AgentRouter.get('/getAgent', catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -73,9 +74,10 @@ AgentRouter.post('/requestAgent', Authenticate, catchAsync(async (req: RequestWi
     console.log(reason);
     console.log(user.email);
     console.log(user._id);
+    const contactMessage = `User: ${user.email} with ID: ${user._id.toString()} has requested an agent for the following reason: "${reason}"`;
+    sendEmail(process.env.MY_EMAIL, 'Radah Agent Request', contactMessage, process.env.MY_EMAIL, process.env.MY_PASSWORD);
+    sendEmail("gautamsharda001@gmail.com", 'Radah Agent Request', contactMessage, process.env.MY_EMAIL, process.env.MY_PASSWORD);
     res.status(200).send({ message: "Request sent" });
 }));
-
-
 
 export default AgentRouter;

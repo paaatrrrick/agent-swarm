@@ -29,6 +29,7 @@ interface Endpoints {
   getAgent: string;
   getUsersAgent: string;
   getAllAgents: string;
+  requestAgent: string;
   addAgent: string;
 }
 
@@ -58,6 +59,7 @@ const constants : Constants = {
     getUsersAgent: "/agent/getUsersAgent",
     getAllAgents: "/agent/getAllAgents",
     addAgent: "/agent/addAgent",
+    requestAgent: "/agent/requestAgent",
   }
 };
 

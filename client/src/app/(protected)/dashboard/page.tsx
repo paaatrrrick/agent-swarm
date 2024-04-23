@@ -12,6 +12,7 @@ import Rightsidebar from '@/components/home/Rightsidebar';
 import AgentMessage from '@/types/websocket';
 import { handleIncomingWorkspaceStatus } from '@/helpers/workspaceStatus';
 
+
 const dummyData = [
     { "role": "user", "type": "message", "content": "What's 2380*3875?" },
     { "role": "assistant", "type": "code", "format": "python", "content": "2380*3875" },

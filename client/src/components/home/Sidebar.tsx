@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react'
-import { SignUpWithGooglePopUp, fireBaseAuth } from '@/helpers/firebase'
+import { SignUpWithGooglePopUp, fireBaseAuth, getAuthToken } from '@/helpers/firebase'
 import { signOut } from "firebase/auth";
 import Icon from '@/components/ui/icon';
 import { ModeToggle } from '../ui/ModeToggle';
@@ -10,10 +10,24 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogClose,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import constants from '@/helpers/constants';
 import { UserOrBool, StringAgentUndefined } from '@/types/user';
 import { Button } from '../ui/button';
 import clsx from 'clsx';
+import { Textarea } from '../ui/textarea';
+import { useError } from '@/context/ErrorContext';
 
 interface SidebarInterface {
     isSidebarOpen: boolean,
@@ -26,6 +40,27 @@ interface SidebarInterface {
 }
 
 export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents, currentAgentIndex, setCurrentAgentIndex, addAgent }: SidebarInterface) {
+    const [requestAgentTextArea, setRequestAgentTextAre] = useState<string>("")
+    const { setError } = useError();
+
+    const submitRequestAgent = async () => {
+        const token = await getAuthToken();
+        const response = await fetch(constants.serverUrl + constants.endpoints.requestAgent, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ reason: requestAgentTextArea })
+        });
+        setRequestAgentTextAre("")
+        if (!response.ok) {
+            setError({ primaryMessage: "Failed to send request", secondaryMessage: "Please try again later", type: "error" })
+            return;
+        }
+        setError({ primaryMessage: "You've successfully requested another agent", secondaryMessage: "We will get back to you within 48 hours", type: "success" })
+    }
+
     return (
         <div className={`fixed inset-y-0 left-0 flex flex-col items-start justify-between
         w-64 bg-secondary z-20 transition-transform duration-300 ease-in-out p-4
@@ -44,9 +79,36 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                             <p className='mr-2'>Agent</p>#{index + 1}
                         </Button>
                     ))}
-                    <Button className='w-full border-2 bg-transparent text-primary border-primary hover:bg-offbackground' onClick={addAgent}>
-                        New Agent +
-                    </Button>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button className='w-full border-2 hover:bg-transparent text-primary font-semibold border-primary bg-offbackground'>
+                                Requent Another Agent +
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Request Another Agent</DialogTitle>
+                                <DialogDescription>
+                                    Share why you are looking for another agent. We should be able to get back to you within 48 hours.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid w-full gap-1.5 py-4">
+                                <Label htmlFor="request">
+                                    Reason for request
+                                </Label>
+                                <Textarea id="request" placeholder="looking to benchmark open interpreter..." value={requestAgentTextArea}
+                                    onChange={(e) => { setRequestAgentTextAre(e.target.value) }}
+                                />
+                            </div>
+                            <DialogFooter>
+                                <DialogClose asChild>
+                                    <Button type="submit" className='bg-purple-500 hover:bg-purple-600' onClick={submitRequestAgent}
+                                        disabled={requestAgentTextArea.length <= 10}
+                                    >Submit</Button>
+                                </DialogClose>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </div>
 

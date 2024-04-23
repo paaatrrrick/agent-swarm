@@ -61,5 +61,21 @@ AgentRouter.get('/addAgent', Authenticate, catchAsync(async (req: RequestWithUse
 }));
 
 
+AgentRouter.post('/requestAgent', Authenticate, catchAsync(async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const { reason } = req.body;
+    if (!reason) {
+        res.status(400).send({ message: "Reason is required" });
+        return;
+    }
+    const user = req.user;
+    console.log('')
+    console.log('🔮 Requesting agent 🔮');
+    console.log(reason);
+    console.log(user.email);
+    console.log(user._id);
+    res.status(200).send({ message: "Request sent" });
+}));
+
+
 
 export default AgentRouter;

@@ -85,7 +85,7 @@ const ScreenComponent = () => {
         if (response.ok) {
             const data = await response.json();
             const messages = data.messages;
-            const workspaceMessages = handleIncomingWorkspaceStatus(messages, []);
+            const workspaceMessages = handleIncomingWorkspaceStatus(messages, agentMessages || []);
             setAgentMessages(workspaceMessages);
         }
     }
@@ -138,7 +138,6 @@ const ScreenComponent = () => {
         }
 
         const handleWorkspaceStatus = (data: any) => {
-            console.log('handle workspace status');
             const payload: AgentMessage[] = data.payload;
             const workspaceMessages = handleIncomingWorkspaceStatus(payload, agentMessages);
             setAgentMessages(workspaceMessages);
@@ -174,6 +173,7 @@ const ScreenComponent = () => {
         if (currentAgentIndex === index) return
         ws?.close()
         setPromptRunning(false)
+        setAgentMessages([])
         setWorkspaceConnection(false)
         setError(undefined);
         setWS(null)

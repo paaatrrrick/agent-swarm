@@ -136,7 +136,7 @@ class WebSocketObject {
         console.log('b')
         const agentID = connectionManager.agentID;
         console.log(agentID);
-        if (!this.agentIDMap.get(agentID).workspaceUniqueID) return;
+        if (!this.agentIDMap.get(agentID)?.workspaceUniqueID) return;
         console.log('c')
         if (connectionManager instanceof ClientConnection) {
             console.log('d')
@@ -153,7 +153,7 @@ class WebSocketObject {
 
         //if workspaceUniqueID is undefined and clientUniqueID is empty then delete agentID from agentIDMap
         console.log(this.agentIDMap);
-        if (!this.agentIDMap.get(agentID).workspaceUniqueID && this.agentIDMap.get(agentID).clientUniqueID.length === 0) {
+        if (!this.agentIDMap.get(agentID)?.workspaceUniqueID && this.agentIDMap.get(agentID)?.clientUniqueID?.length === 0) {
             console.log('f')
             this.agentIDMap.delete(agentID);
         }

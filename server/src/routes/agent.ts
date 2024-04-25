@@ -49,7 +49,16 @@ AgentRouter.get('/addAgent', Authenticate, catchAsync(async (req: RequestWithUse
         agents.push({agentID: id, streamingLink: agent.streamingLink})
     }
 
-    const { streamingLink, _id } = await AgentManagerClass.getAgent();
+    var streamingLink = undefined;
+    var _id = undefined;
+    try {
+        const res = await AgentManagerClass.getAgent();
+        streamingLink = res.streamingLink;
+        _id = res._id;
+    } catch (error) {
+        res.status(400).send({ message: "No available agents" });
+        return;
+    }
     user.agentIDs.push(_id.toString());
     await user.save();
 

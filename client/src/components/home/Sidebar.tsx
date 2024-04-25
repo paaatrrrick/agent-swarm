@@ -36,10 +36,10 @@ interface SidebarInterface {
     agents: StringAgentUndefined[],
     currentAgentIndex: number | undefined,
     setCurrentAgentIndex: (index: number) => void,
-    // addAgent: () => void,
+    addAgent: () => void,
 }
 
-export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents, currentAgentIndex, setCurrentAgentIndex }: SidebarInterface) {
+export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents, currentAgentIndex, addAgent, setCurrentAgentIndex }: SidebarInterface) {
     const [requestAgentTextArea, setRequestAgentTextAre] = useState<string>("")
     const { setError } = useError();
 
@@ -79,36 +79,43 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                             <p className='mr-2'>Agent</p>#{index + 1}
                         </Button>
                     ))}
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button className='w-full border-2 hover:bg-transparent text-primary font-semibold border-primary bg-offbackground'>
-                                Requent Another Agent +
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogTitle>Request Another Agent</DialogTitle>
-                                <DialogDescription>
-                                    Share why you are looking for another agent. We should be able to get back to you within 48 hours.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="grid w-full gap-1.5 py-4">
-                                <Label htmlFor="request">
-                                    Reason for request
-                                </Label>
-                                <Textarea id="request" placeholder="looking to benchmark open interpreter..." value={requestAgentTextArea}
-                                    onChange={(e) => { setRequestAgentTextAre(e.target.value) }}
-                                />
-                            </div>
-                            <DialogFooter>
-                                <DialogClose asChild>
-                                    <Button type="submit" className='bg-purple-500 hover:bg-purple-600 text-white' onClick={submitRequestAgent}
-                                        disabled={requestAgentTextArea.length <= 10}
-                                    >Submit</Button>
-                                </DialogClose>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
+
+                    {agents.length < 2
+                        ? <Button className='w-full border-2 hover:bg-transparent text-primary font-semibold border-primary bg-offbackground' onClick={addAgent}>
+                            Add Another Agent +
+                        </Button>
+                        :
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button className='w-full border-2 hover:bg-transparent text-primary font-semibold border-primary bg-offbackground'>
+                                    Requent Another Agent +
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>Request Another Agent</DialogTitle>
+                                    <DialogDescription>
+                                        Share why you are looking for another agent. We should be able to get back to you within 48 hours.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid w-full gap-1.5 py-4">
+                                    <Label htmlFor="request">
+                                        Reason for request
+                                    </Label>
+                                    <Textarea id="request" placeholder="looking to benchmark open interpreter..." value={requestAgentTextArea}
+                                        onChange={(e) => { setRequestAgentTextAre(e.target.value) }}
+                                    />
+                                </div>
+                                <DialogFooter>
+                                    <DialogClose asChild>
+                                        <Button type="submit" className='bg-purple-500 hover:bg-purple-600 text-white' onClick={submitRequestAgent}
+                                            disabled={requestAgentTextArea.length <= 10}
+                                        >Submit</Button>
+                                    </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                    }
                 </div>
             </div>
 

@@ -41,7 +41,7 @@ const ScreenComponent = () => {
         if (response.ok) {
             const data = await response.json();
             const messages = data.messages;
-            const workspaceMessages = handleIncomingWorkspaceStatus(messages, agentMessages || []);
+            const workspaceMessages = handleIncomingWorkspaceStatus(messages, []);
             setAgentMessages(workspaceMessages);
         }
     }

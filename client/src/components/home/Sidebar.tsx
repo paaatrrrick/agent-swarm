@@ -67,17 +67,18 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
         transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
         `}>
             {/* top */}
-            <div className='flex flex-col justify-start items-start w-full'>
+            <div className='flex flex-col justify-start items-start w-full h-full'>
                 <div className='w-full flex justify-between items-center'>
                     <h3 className='font-mono text-xl'>Radah.ai</h3>
                     <Icon type="hamburger" onClick={toggleSidebar} />
                 </div>
                 <hr className='w-full border-primary border-1 mt-4' />
-                <div className='mt-4 w-full gap-4 flex flex-col items-start justify-start'>
+                <div className='mt-4 w-full gap-4 flex flex-col items-start justify-start bg-red-300 overflow-y-scroll h-full'>
                     {agents.map((agent, index) => (
                         <Button className={clsx('w-full', currentAgentIndex === index && 'bg-purple-500 text-white hover:bg-purple-600')} onClick={() => { setCurrentAgentIndex(index) }} key={index}>
                             <p className='mr-2'>Agent</p>#{index + 1}
                         </Button>
+
                     ))}
 
                     {agents.length < 2
@@ -120,7 +121,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
             </div>
 
             {/* bottom */}
-            <div className='w-full'>
+            <div className='w-full mt-4'>
                 <div className='w-full flex flex-row items-center justify-center gap-2'>
                     <ModeToggle />
                     <Icon type='github' onClick={() => { window.open(constants.githubUrl, "_blank"); }} />
@@ -158,6 +159,6 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                     </button>
                 }
             </div>
-        </div>
+        </div >
     )
 }

@@ -51,8 +51,8 @@ class WorkspaceConnection {
         }
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : [message]});
         if (agent) {
-            agent.messages = agent.messages.concat([message]);
-            await agent.save();
+            //agent.messages = agent.messages.concat([message]);
+            await agent.updateOne({$push: {messages: message}});
         }
 
     }

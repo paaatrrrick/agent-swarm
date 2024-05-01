@@ -6,7 +6,10 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    //skipLibCheck off
+    "skipLibCheck": true
+    //omit dev
   },
   "lib": ["es2015"],
 }

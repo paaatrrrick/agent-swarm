@@ -36,7 +36,7 @@ class WorkspaceConnection {
         console.log('at handle message in workspace')
         console.log(this.agentID);
         console.log(message);
-        const agent = await Agent.findById("66039df5a8738d00a5260365");
+        const agent = await Agent.findById(this.agentID);
         console.log('made it passed this')
         if (message.sender && message.sender === 'client') {
             this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : message.payload});

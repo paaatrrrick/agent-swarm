@@ -45,6 +45,13 @@ class WorkspaceConnection {
             if (agent) await agent.updateOne({$push: {messages: message}});
             return;
         }
+
+        if (message.type && message.type === 'done') {
+            console.log('done message')
+            this.setPromptRunning(false);
+            return
+        }
+
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : [message]});
         if (agent) {
             //agent.messages = agent.messages.concat([message]);
@@ -86,10 +93,11 @@ class WorkspaceConnection {
     
             const url : string = `${agent.ipAddress}/message`;
             const data = {message: message, first: 0}
-            const res = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
-            this.setPromptRunning(false);
-            if (res.status !== 200) return "error";
-            return res.data;
+            await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
+            return
+            // this.setPromptRunning(false);
+            // if (res.status !== 200) return "error";
+            // return res.data;
 
         } catch (error) {
             console.log(error);

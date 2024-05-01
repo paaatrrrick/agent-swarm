@@ -18,6 +18,8 @@ class ClientConnection {
 
     async handleMessage(data : any) : Promise<void> {
         const { type } = data;
+        console.log('handle message in client connection');
+        console.log(data);
         if (type === 'prompt') return await this.handlePromptMessage(data);
         if (type === 'terminate') return await this.parent.getWorkspaceConnection(this.agentID)?.handleTerminate();
     }

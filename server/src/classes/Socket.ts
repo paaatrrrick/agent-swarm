@@ -95,7 +95,8 @@ class WebSocketObject {
                 console.log(this.agentIDMap);
                 return;
             }
-
+            console.log('socket non normal thing');
+            console.log(uniqueID);
             this.uniqueIDMap.get(uniqueID)?.connectionManager?.handleMessage(data);
         } catch (error) {
             console.log(error);

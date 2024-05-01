@@ -38,6 +38,32 @@ class WebSocketObject {
         });
     }
 
+
+    // {
+
+    //     type: 'config',
+        
+    //     promptRunning: false,
+        
+    //     agentID: '6629abd1a6b28d6493390ba8',
+        
+    //     connectionType: 'workspace'
+        
+    // }
+
+
+    // {
+
+    //     type: 'config',
+        
+    //     promptRunning: false,
+        
+    //     agentID: '66039df5a8738d00a5260365',
+        
+    //     connectionType: 'workspace'
+        
+    //     }
+
     async handleMessage(message : RawData, ws : WebSocket, uniqueID : string) : Promise<void> {
         try {
             const data = JSON.parse(message.toString());
@@ -128,26 +154,16 @@ class WebSocketObject {
     }
 
     async closeConnection(uniqueID : string) : Promise<void> {
-        console.log('closing connection');
-        console.log(uniqueID);
-        console.log(this.agentIDMap);
         const connectionManager = this.uniqueIDMap.get(uniqueID)?.connectionManager;
-        console.log('a')
         if (!connectionManager) return;
-        console.log('b')
         const agentID = connectionManager.agentID;
-        console.log(agentID);
         if (!this.agentIDMap.get(agentID)?.workspaceUniqueID) return;
-        console.log('c')
         if (connectionManager instanceof ClientConnection) {
-            console.log('d')
             const { clientUniqueID, workspaceUniqueID } = this.agentIDMap.get(agentID);
             if (clientUniqueID) {
                 this.agentIDMap.set(agentID, {clientUniqueID: clientUniqueID.filter(id => id !== uniqueID), workspaceUniqueID});
             }
         } else if (connectionManager instanceof WorkspaceConnection) {
-            console.log('e')
-            console.log(this.agentIDMap);
             this.agentIDMap.get(agentID).workspaceUniqueID = undefined;
 
         }
@@ -155,13 +171,10 @@ class WebSocketObject {
         //if workspaceUniqueID is undefined and clientUniqueID is empty then delete agentID from agentIDMap
         console.log(this.agentIDMap);
         if (!this.agentIDMap.get(agentID)?.workspaceUniqueID && this.agentIDMap.get(agentID)?.clientUniqueID?.length === 0) {
-            console.log('f')
             this.agentIDMap.delete(agentID);
         }
         //remove from uniqueIDMap
         this.uniqueIDMap.delete(uniqueID);
-        console.log(this.agentIDMap);
-
     }
 }
 

@@ -36,7 +36,7 @@ class WorkspaceConnection {
         console.log('at handle message in workspace')
         console.log(this.agentID);
         console.log(message);
-        const agent = await Agent.findById(this.agentID);
+        const agent = await Agent.findById("66039df5a8738d00a5260365");
         console.log('made it passed this')
         if (message.sender && message.sender === 'client') {
             this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : message.payload});
@@ -65,7 +65,6 @@ class WorkspaceConnection {
 
     async handleTerminate() : Promise<void> {
         try {
-            console.log('terminating in workspace connection');
             const agent = await Agent.findById(this.agentID);
             if (!agent) return;
             console.log(this.agentID);
@@ -85,17 +84,12 @@ class WorkspaceConnection {
     }
 
     async talkToagent(message : string) : Promise<string> {
-        console.log('talking to agent in workspace connection top')
         try {
-            console.log('talking to agent in workspace connection');
-            console.log(message);
             const agent = await Agent.findById(this.agentID);
             if (!agent) return "agent not found";
     
             const url : string = `${agent.ipAddress}/message`;
             const data = {message: message, first: 0}
-            console.log(message);
-            console.log(url);
             const res = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
             this.setPromptRunning(false);
             if (res.status !== 200) return "error";

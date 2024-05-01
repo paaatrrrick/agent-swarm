@@ -33,23 +33,13 @@ class WorkspaceConnection {
     }
 
     async handleMessage(message : any) : Promise<void> {
-        console.log('at handle message in workspace')
-        console.log(this.agentID);
-        console.log(message);
         const agent = await Agent.findById(this.agentID);
-        console.log('made it passed this')
         if (message.sender && message.sender === 'client') {
             this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : message.payload});
 
             //concat message.payload to agent.messages
             if (agent) await agent.updateOne({$push: {messages: message}});
             return;
-        }
-
-        if (message.type && message.type === 'done') {
-            console.log('done message')
-            this.setPromptRunning(false);
-            return
         }
 
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : [message]});
@@ -93,11 +83,10 @@ class WorkspaceConnection {
     
             const url : string = `${agent.ipAddress}/message`;
             const data = {message: message, first: 0}
-            await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
+            const response = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
+            console.log(response)
+            console.log('talk to agent has a response (websocket')
             return
-            // this.setPromptRunning(false);
-            // if (res.status !== 200) return "error";
-            // return res.data;
 
         } catch (error) {
             console.log(error);

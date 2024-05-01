@@ -73,6 +73,7 @@ class WebSocketObject {
             console.log(data);
     
             if (type === 'config') {
+                console.log(this.agentIDMap)
                 const connectionType : connectionType = data.connectionType;
                 const { agentID } = data;
 
@@ -80,7 +81,6 @@ class WebSocketObject {
 
                 if (!agent) {
                     ws.send(JSON.stringify({type: 'error', message: 'agent not found'}));
-                    console.log(this.agentIDMap);
                     return;
                 }
 
@@ -89,26 +89,16 @@ class WebSocketObject {
                 }
 
                 if (connectionType === "client") {
-                    console.log(this.agentIDMap)
                     const clientConnection : ClientConnection = new ClientConnection(ws, agentID, uniqueID, this);
                     this.uniqueIDMap.set(uniqueID, {type: connectionType, connectionManager: clientConnection});
                     this.agentIDMap.get(agentID).clientUniqueID.push(uniqueID);
-                    console.log('find workspace');
-                    console.log(this.agentIDMap.get(agentID))
-                    console.log(this.agentIDMap.get(agentID).workspaceUniqueID);
-                    console.log('');
                     //@ts-ignore
                     const workspaceConnection : WorkspaceConnection | undefined = this.uniqueIDMap.get(this.agentIDMap.get(agentID)?.workspaceUniqueID)?.connectionManager;
-                    console.log('workspace connection');
                     if (!workspaceConnection) {
-                        console.log('wamp wamp')
                         clientConnection.sendMessage("config", {promptRunning: false, workspaceConnection: false});
-                        console.log(this.agentIDMap);
                         return;
                     }
                     const promptRunning = workspaceConnection.getPromptRunning() || false;
-                    console.log('prompt running');
-                    console.log(promptRunning);
                     clientConnection.sendMessage("config", {promptRunning: promptRunning, workspaceConnection: true});
 
                 } else if (connectionType === "workspace") {
@@ -118,11 +108,8 @@ class WebSocketObject {
                     this.agentIDMap.get(agentID).workspaceUniqueID = uniqueID;
                     workspaceConnection.init();
                 }
-                console.log(this.agentIDMap);
                 return;
             }
-            console.log('socket non normal thing');
-            console.log(uniqueID);
             this.uniqueIDMap.get(uniqueID)?.connectionManager?.handleMessage(data);
         } catch (error) {
             console.log(error);

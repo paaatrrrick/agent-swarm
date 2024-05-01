@@ -18,8 +18,8 @@ class ClientConnection {
 
     async handleMessage(data : any) : Promise<void> {
         const { type } = data;
+        console.log('')
         console.log('handle message in client connection');
-        console.log(data);
         if (type === 'prompt') return await this.handlePromptMessage(data);
         if (type === 'terminate') return await this.parent.getWorkspaceConnection(this.agentID)?.handleTerminate();
     }
@@ -52,7 +52,6 @@ class ClientConnection {
         }
 
         workspace.setPromptRunning(true);
-        console.log('send to neighbors');
         this.parent.getWorkspaceConnection(this.agentID)?.handleMessage({"sender": "client", 
         "payload" : [
             { "role": "user", "type": "message", start: true },
@@ -60,12 +59,8 @@ class ClientConnection {
             { "role": "user", "type": "message", end: true },
         ]})
 
-        console.log('send to neighbors 2.0');
-
         const res = await this.parent.getWorkspaceConnection(this.agentID)?.talkToagent(message);    
-        
-        if (workspace.getPromptRunning() === false) return;
-
+        console.log('we have gotten a response from talk to agent in hadnle message');
         workspace.setPromptRunning(false);
     }
 }

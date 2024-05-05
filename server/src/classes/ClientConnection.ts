@@ -59,9 +59,11 @@ class ClientConnection {
             { "role": "user", "type": "message", end: true },
         ]})
 
-        const res = await this.parent.getWorkspaceConnection(this.agentID)?.talkToagent(message);    
-        console.log('we have gotten a response from talk to agent in hadnle message');
-        workspace.setPromptRunning(false);
+        this.parent.getWorkspaceConnection(this.agentID)?.talkToagent(message);    
+        //console.log('we have gotten a response from talk to agent in hadnle message');
+        
+        //Add this back if we have the done endpoint
+        //workspace.setPromptRunning(false);
     }
 }
 

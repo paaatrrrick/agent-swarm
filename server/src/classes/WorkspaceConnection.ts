@@ -42,6 +42,12 @@ class WorkspaceConnection {
             return;
         }
 
+        if (message.type && message.type === 'done') {
+            console.log('done message')
+            this.setPromptRunning(false);
+            return
+        }
+
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : [message]});
         if (agent) {
             //agent.messages = agent.messages.concat([message]);
@@ -83,9 +89,10 @@ class WorkspaceConnection {
     
             const url : string = `${agent.ipAddress}/message`;
             const data = {message: message, first: 0}
-            const response = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
-            console.log(response)
-            console.log('talk to agent has a response (websocket')
+            axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
+            //const response = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
+            // console.log(response)
+            // console.log('talk to agent has a response (websocket')
             return
 
         } catch (error) {

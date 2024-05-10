@@ -92,8 +92,7 @@ class WebSocketObject {
             }
             this.uniqueIDMap.get(uniqueID)?.connectionManager?.handleMessage(data);
         } catch (error) {
-            console.log(error);
-            console.log(this.agentIDMap);
+            console.log('error in handle message in socket.ts');
         }
     }
 

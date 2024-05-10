@@ -76,7 +76,7 @@ class WorkspaceConnection {
             return res.data;
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             console.log('internal error at workspace connection on terminate');
             return;
         }
@@ -89,7 +89,9 @@ class WorkspaceConnection {
     
             const url : string = `${agent.ipAddress}/message`;
             const data = {message: message, first: 0}
-            axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
+            try {
+                axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
+            } catch (error) {}
             // const response = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
             // console.log(response)
             // console.log('talk to agent has a response (websocket')

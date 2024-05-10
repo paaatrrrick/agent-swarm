@@ -13,8 +13,6 @@ WorkspaceRouter.get('/promptComplete/:agentID',  catchAsync(async (req: Request,
     const agentID = req.params.agentID;
     console.log(agentID);
 
-    console.log(websockObject);
-
     if (!websockObject) return res.status(400).send({ message: 'Websocket not initialized' });
 
     websockObject.setPromptRunning(agentID, false);

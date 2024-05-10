@@ -112,7 +112,7 @@ class WebSocketObject {
             //message get unwrapped in sendMessage
             clientConnection.sendMessage(type, message);
         });
-    }
+}
 
     async handleClose(uniqueID : string) : Promise<void> {
         console.log('closing out a connection');
@@ -121,12 +121,20 @@ class WebSocketObject {
 
 
     getPromptRunning(agentID : string) : boolean {
+
+        console.log('')
+        console.log('the current state is')
+        console.log(this.agentIDMap.get(agentID))
+        console.log(this.agentIDMap.get(agentID)?.promptRunning)
+        console.log('-----')
+
         return this.agentIDMap.get(agentID)?.promptRunning;
     }
 
     setPromptRunning(agentID : string, promptRunning : boolean) : void {
-        console.log('setting prompt running in socket.ts')
-        if (this.agentIDMap.get(agentID)?.promptRunning === promptRunning) return;
+        console.log('setting prompt running in socket.ts, the type is: ' + String(promptRunning))
+        if (this.getPromptRunning(agentID) === promptRunning) return;
+        console.log('sending it all out')
         this.agentIDMap.set(agentID, {clientUniqueID: this.agentIDMap.get(agentID)?.clientUniqueID || [], workspaceUniqueID: this.agentIDMap.get(agentID)?.workspaceUniqueID, promptRunning});
     }
 

@@ -83,7 +83,6 @@ class WebSocketObject {
                 } else if (connectionType === "workspace") {
 
                     //setup workspace connection
-                    const { promptRunning } = data;
                     const workspaceConnection = new WorkspaceConnection(ws, agentID, uniqueID, this);
                     this.uniqueIDMap.set(uniqueID, {type: connectionType, connectionManager: workspaceConnection});
                     this.agentIDMap.get(agentID).workspaceUniqueID = uniqueID;

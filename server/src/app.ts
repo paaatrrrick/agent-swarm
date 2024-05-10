@@ -12,6 +12,7 @@ import AgentRouter from './routes/agent';
 
 import WebSocketObject from './classes/Socket';
 import { manualProcess } from './methods/manualProcess';
+import WorkspaceRouter from './routes/workspace';
 
 
 const AgentManagerClass : AgentManager = new AgentManager();
@@ -84,6 +85,7 @@ export default class Api {
         app.use(cookieParser());
         app.use(`/auth`, AuthRouter);
         app.use(`/agent`, AgentRouter);
+        app.use('/workspace', WorkspaceRouter);
         app.use(this.error());
 
         let PORT: number | string = process.env.PORT;

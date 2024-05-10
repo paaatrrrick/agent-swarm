@@ -10,26 +10,25 @@ class WorkspaceConnection {
     promptrunning: boolean;
     parent: WebSocketObject;
 
-    constructor(ws: WebSocket, agentID: string, uniqueID: string, promptrunning : boolean, parent : WebSocketObject) {
+    constructor(ws: WebSocket, agentID: string, uniqueID: string, parent : WebSocketObject) {
         this.ws = ws;
         this.agentID = agentID;
         this.uniqueID = uniqueID;
         this.parent = parent;
-        this.promptrunning = promptrunning;
     }
 
     init() {
-        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: false, workspaceConnection : true, successAlert: true});   
+        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: this.getPromptRunning(), workspaceConnection : true, successAlert: true});   
     }
 
     getPromptRunning() : boolean {
-        return this.promptrunning;
+        return this.parent.getPromptRunning(this.agentID);
     }
 
     setPromptRunning(promptrunning : boolean) : void {
-        if (promptrunning === this.promptrunning) return;
+        if (promptrunning === this.getPromptRunning()) return;
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: promptrunning, workspaceConnection : true});
-        this.promptrunning = promptrunning;
+        this.parent.setPromptRunning(this.agentID, promptrunning);
     }
 
     async handleMessage(message : any) : Promise<void> {
@@ -42,11 +41,12 @@ class WorkspaceConnection {
             return;
         }
 
-        if (message.type && message.type === 'done') {
-            console.log('done message')
-            this.setPromptRunning(false);
-            return
-        }
+        // add back for websocket
+        // if (message.type && message.type === 'done') {
+        //     console.log('done message')
+        //     this.setPromptRunning(false);
+        //     return
+        // }
 
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : [message]});
         if (agent) {
@@ -57,7 +57,7 @@ class WorkspaceConnection {
     }
 
     async handleClose() {
-        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: this.promptrunning, workspaceConnection : false});
+        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: this.getPromptRunning(), workspaceConnection : false});
         this.parent.closeConnection(this.uniqueID);
     }
 
@@ -89,10 +89,10 @@ class WorkspaceConnection {
     
             const url : string = `${agent.ipAddress}/message`;
             const data = {message: message, first: 0}
-            axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
-            //const response = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
-            // console.log(response)
-            // console.log('talk to agent has a response (websocket')
+            //axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
+            const response = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
+            console.log(response)
+            console.log('talk to agent has a response (websocket')
             return
 
         } catch (error) {

@@ -9,9 +9,7 @@ const WorkspaceRouter = express.Router();
 
 
 WorkspaceRouter.get('/promptComplete/:agentID',  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    console.log('we have reached the promptComplete route');
     const agentID = req.params.agentID;
-    console.log(agentID);
 
     if (!websockObject) return res.status(400).send({ message: 'Websocket not initialized' });
 

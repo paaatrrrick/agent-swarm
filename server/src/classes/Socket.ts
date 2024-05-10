@@ -5,6 +5,22 @@ import ClientConnection from "./ClientConnection";
 
 type connectionType =  "client" | "workspace";
 
+// type role = 'user' | 'assistant' | 'computer';
+// type type = "message" | "code" | "console";
+// type format = 'python' | "output" | "active_line" | string;
+
+
+interface AgentMessage {
+    role?: string;
+    type?: string;
+    format?: string;
+    content?: string;
+    start? : string
+    end? : string
+    completed? : boolean
+}
+
+
 interface uniqueIDMetadata {
     type: connectionType;
     //if type is client then class is ClientConnection else WorkspaceConnection
@@ -15,6 +31,7 @@ interface threeWayHandshake {
     clientUniqueID: string[];
     workspaceUniqueID?: string;
     promptRunning: boolean;
+    messageStack: AgentMessage | undefined;
 }
 
 
@@ -40,59 +57,75 @@ class WebSocketObject {
     }
 
 
+
+    async addToMessageStack(agentID : string, incoming : AgentMessage) : Promise<void> {
+        const agent = this.agentIDMap.get(agentID);
+        if (!agent) return;
+        console.log('\n adding to messages stack\n incoming:' + JSON.stringify(incoming) + '\n current message stack: ' + JSON.stringify(agent.messageStack) + '\n');
+        if (incoming.start) {
+            if (agent.messageStack !== undefined) await Agent.findByIdAndUpdate(agentID, {$push: {messages: agent.messageStack}});
+            //delete start from incoming
+            delete incoming.start
+            incoming.content = "";
+            agent.messageStack = incoming;
+            console.log('\nnew message stack s\n' + JSON.stringify(agent.messageStack) + '\n');
+
+        } else if (agent.messageStack === undefined && !incoming.end) {
+            agent.messageStack = incoming;
+            console.log('\nnew message stack 2\n' + JSON.stringify(agent.messageStack) + '\n');
+
+        } else if (incoming.content) {
+            agent.messageStack.content += incoming.content;
+            console.log('\nnew message stack 3\n' + JSON.stringify(agent.messageStack) + '\n');
+        }
+
+        if (incoming.end) {
+            await Agent.findByIdAndUpdate(agentID, {$push: {messages: agent.messageStack}});
+            agent.messageStack = undefined;
+        }
+    }
+
     async handleMessage(message : RawData, ws : WebSocket, uniqueID : string) : Promise<void> {
         try {
             const data = JSON.parse(message.toString());
-            const type = data.type;
-            console.log('');
-            console.log('incoming message');
-            console.log(data);
+            console.log('\nincoming message\n' + JSON.stringify(data) + '\n'); 
     
-            if (type === 'config') {
-                const connectionType : connectionType = data.connectionType;
-                const { agentID } = data;
-
-                const agent = await Agent.findById(agentID);
-
+            if (data.type === 'config') {
+                const agent = await Agent.findById(data.agentID);
                 if (!agent) {
                     ws.send(JSON.stringify({type: 'error', message: 'agent not found'}));
                     return;
                 }
-
-                if (!this.agentIDMap.get(agentID)){
-                    this.agentIDMap.set(agentID, {clientUniqueID: [], promptRunning: false});
-                }
-
-                if (connectionType === "client") {
-
-                    
-                    //setup client connection
-                    const clientConnection : ClientConnection = new ClientConnection(ws, agentID, uniqueID, this);
-                    this.uniqueIDMap.set(uniqueID, {type: connectionType, connectionManager: clientConnection});
-                    this.agentIDMap.get(agentID).clientUniqueID.push(uniqueID);
-                    //@ts-ignore
-                    const workspaceConnection : WorkspaceConnection | undefined = this.uniqueIDMap.get(this.agentIDMap.get(agentID)?.workspaceUniqueID)?.connectionManager;
-                    if (!workspaceConnection) {
-                        clientConnection.sendMessage("config", {promptRunning: false, workspaceConnection: false});
-                        return;
-                    }
-                    const promptRunning = workspaceConnection.getPromptRunning() || false;
-                    clientConnection.sendMessage("config", {promptRunning: promptRunning, workspaceConnection: true});
-
-                } else if (connectionType === "workspace") {
-
-                    //setup workspace connection
-                    const workspaceConnection = new WorkspaceConnection(ws, agentID, uniqueID, this);
-                    this.uniqueIDMap.set(uniqueID, {type: connectionType, connectionManager: workspaceConnection});
-                    this.agentIDMap.get(agentID).workspaceUniqueID = uniqueID;
-                    workspaceConnection.init();
-                }
+                if (!this.agentIDMap.get(data.agentID)) this.agentIDMap.set(data.agentID, {clientUniqueID: [], promptRunning: false, messageStack: undefined});
+                if (data.connectionType === "client") this.addClientConnection(data.agentID, ws, uniqueID);
+                if (data.connectionType === "workspace") this.addWorkspaceConnection(data.agentID, ws, uniqueID);
                 return;
             }
             this.uniqueIDMap.get(uniqueID)?.connectionManager?.handleMessage(data);
         } catch (error) {
             console.log('error in handle message in socket.ts');
         }
+    }
+
+    addWorkspaceConnection(agentID : string, ws : WebSocket, uniqueID : string) {
+        const workspaceConnection = new WorkspaceConnection(ws, agentID, uniqueID, this);
+        this.uniqueIDMap.set(uniqueID, {type: "workspace", connectionManager: workspaceConnection});
+        this.agentIDMap.get(agentID).workspaceUniqueID = uniqueID;
+        workspaceConnection.init();
+    }
+
+
+    addClientConnection(agentID : string, ws : WebSocket, uniqueID : string) {
+        const clientConnection = new ClientConnection(ws, agentID, uniqueID, this);
+        this.uniqueIDMap.set(uniqueID, {type: "client", connectionManager: clientConnection});
+        this.agentIDMap.get(agentID).clientUniqueID.push(uniqueID);
+        const workspaceConnection = this.getWorkspaceConnection(agentID);
+        if (!workspaceConnection) {
+            clientConnection.sendMessage("config", {promptRunning: false, workspaceConnection: false});
+            return;
+        }
+        const promptRunning = workspaceConnection.getPromptRunning() || false;
+        clientConnection.sendMessage("config", {promptRunning: promptRunning, workspaceConnection: true});
     }
 
 
@@ -115,25 +148,19 @@ class WebSocketObject {
 }
 
     async handleClose(uniqueID : string) : Promise<void> {
-        console.log('closing out a connection');
+        console.log('closing out a connection: ' + uniqueID);
         this.uniqueIDMap.get(uniqueID)?.connectionManager?.handleClose();
     }
 
 
     getPromptRunning(agentID : string) : boolean {
-
-        console.log('')
-        console.log('the current state is')
-        console.log(this.agentIDMap.get(agentID))
-        console.log(this.agentIDMap.get(agentID)?.promptRunning)
-        console.log('-----')
-
         return this.agentIDMap.get(agentID)?.promptRunning;
     }
 
     setPromptRunning(agentID : string, promptRunning : boolean) : void {
         if (this.getPromptRunning(agentID) === promptRunning) return;
-        this.agentIDMap.set(agentID, {clientUniqueID: this.agentIDMap.get(agentID)?.clientUniqueID || [], workspaceUniqueID: this.agentIDMap.get(agentID)?.workspaceUniqueID, promptRunning});
+        const agent = this.agentIDMap.get(agentID);
+        if (agent) agent.promptRunning = promptRunning;
     }
 
     setPromptRunningThroughChild(agentID : string, promptRunning : boolean) : void {
@@ -152,15 +179,15 @@ class WebSocketObject {
         if (!this.agentIDMap.get(agentID)) return;
 
         if (connectionManager instanceof ClientConnection) {
-            const { clientUniqueID, workspaceUniqueID, promptRunning } = this.agentIDMap.get(agentID);
-            if (clientUniqueID) this.agentIDMap.set(agentID, {clientUniqueID: clientUniqueID.filter(id => id !== uniqueID), workspaceUniqueID, promptRunning });
-
+            const agent = this.agentIDMap.get(agentID);
+            if (agent?.clientUniqueID) agent.clientUniqueID = agent.clientUniqueID.filter(id => id !== uniqueID);
         } else if (connectionManager instanceof WorkspaceConnection) {
             this.agentIDMap.get(agentID).workspaceUniqueID = undefined;
         }
 
         this.uniqueIDMap.delete(uniqueID);
     }
+
 }
 
 

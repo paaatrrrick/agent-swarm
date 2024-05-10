@@ -36,6 +36,7 @@ const typeToComponent = {
 }
 
 export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessages }: SidebarInterface) {
+    console.log(agentMessages);
 
     //remove all agentMessges where the role is not user, assistant, or computer
     var reducedMessages = agentMessages.filter((message) => { return message.role === "user" || message.role === "assistant" || message.role === "computer" })

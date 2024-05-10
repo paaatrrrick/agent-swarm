@@ -32,28 +32,15 @@ class WorkspaceConnection {
     }
 
     async handleMessage(message : any) : Promise<void> {
-        const agent = await Agent.findById(this.agentID);
         if (message.sender && message.sender === 'client') {
             this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : message.payload});
 
-            //concat message.payload to agent.messages
-            if (agent) await agent.updateOne({$push: {messages: message}});
-            return;
+            for (let subsect of message.payload) {
+                this.parent.addToMessageStack(this.agentID, subsect);
+            }
         }
-
-        // add back for websocket
-        // if (message.type && message.type === 'done') {
-        //     console.log('done message')
-        //     this.setPromptRunning(false);
-        //     return
-        // }
-
+        this.parent.addToMessageStack(this.agentID, message);
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : [message]});
-        if (agent) {
-            //agent.messages = agent.messages.concat([message]);
-            await agent.updateOne({$push: {messages: message}});
-        }
-
     }
 
     async handleClose() {
@@ -70,6 +57,7 @@ class WorkspaceConnection {
     
             const url : string = `${agent.ipAddress}/stop`;
             this.setPromptRunning(false);
+            this.parent.addToMessageStack(this.agentID, {end: "true"});
             const res = await axios.get(url, {headers: {'Content-Type': 'application/json'}});
             
             if (res.status !== 200) return;

@@ -35,14 +35,11 @@ const ScreenComponent = () => {
         setCurrentAgentIndex(index)
         if (!paramAgentID && (index + 1 > agents.length || !agents[index].agentID)) return
         const agentID = paramAgentID || agents[index].agentID;
-        const url = constants.serverUrl + constants.endpoints.getAgentMessages + `?agentID=${agentID}`;
         const token = await getAuthToken();
-        const response = await fetch(url, { headers: { 'Content-Type': 'application/json', 'authorization': `Bearer ${token}` } });
+        const response = await fetch(constants.serverUrl + constants.endpoints.getAgentMessages + `?agentID=${agentID}`, { headers: { 'Content-Type': 'application/json', 'authorization': `Bearer ${token}` } });
         if (response.ok) {
             const data = await response.json();
-            const messages = data.messages;
-            const workspaceMessages = handleIncomingWorkspaceStatus(messages, []);
-            setAgentMessages(workspaceMessages);
+            setAgentMessages(data.messages);
         }
     }
 

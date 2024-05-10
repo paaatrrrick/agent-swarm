@@ -49,7 +49,6 @@ class WebSocketObject {
             console.log(data);
     
             if (type === 'config') {
-                console.log(this.agentIDMap)
                 const connectionType : connectionType = data.connectionType;
                 const { agentID } = data;
 

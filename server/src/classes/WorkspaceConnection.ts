@@ -79,7 +79,13 @@ class WorkspaceConnection {
             const url : string = `${agent.ipAddress}/message`;
             const data = {message: message, first: 0}
             try {
-                axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
+                await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
             } catch (error) {}
             // const response = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
             // console.log(response)

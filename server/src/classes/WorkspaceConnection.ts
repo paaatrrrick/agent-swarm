@@ -38,6 +38,7 @@ class WorkspaceConnection {
             for (let subsect of message.payload) {
                 this.parent.addToMessageStack(this.agentID, subsect);
             }
+            return
         }
         this.parent.addToMessageStack(this.agentID, message);
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : [message]});

@@ -115,6 +115,7 @@ class WebSocketObject {
     }
 
     async handleClose(uniqueID : string) : Promise<void> {
+        console.log('closing out a connection');
         this.uniqueIDMap.get(uniqueID)?.connectionManager?.handleClose();
     }
 

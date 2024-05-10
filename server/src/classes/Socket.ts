@@ -126,6 +126,7 @@ class WebSocketObject {
     }
 
     setPromptRunning(agentID : string, promptRunning : boolean) : void {
+        console.log('setting prompt running in socket.ts')
         if (this.agentIDMap.get(agentID)?.promptRunning === promptRunning) return;
         this.agentIDMap.set(agentID, {clientUniqueID: this.agentIDMap.get(agentID)?.clientUniqueID || [], workspaceUniqueID: this.agentIDMap.get(agentID)?.workspaceUniqueID, promptRunning});
     }
@@ -146,6 +147,8 @@ class WebSocketObject {
         } else if (connectionManager instanceof WorkspaceConnection) {
             this.agentIDMap.get(agentID).workspaceUniqueID = undefined;
         }
+
+        this.uniqueIDMap.delete(uniqueID);
     }
 }
 

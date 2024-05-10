@@ -132,10 +132,14 @@ class WebSocketObject {
     }
 
     setPromptRunning(agentID : string, promptRunning : boolean) : void {
-        console.log('setting prompt running in socket.ts, the type is: ' + String(promptRunning))
         if (this.getPromptRunning(agentID) === promptRunning) return;
-        console.log('sending it all out')
         this.agentIDMap.set(agentID, {clientUniqueID: this.agentIDMap.get(agentID)?.clientUniqueID || [], workspaceUniqueID: this.agentIDMap.get(agentID)?.workspaceUniqueID, promptRunning});
+    }
+
+    setPromptRunningThroughChild(agentID : string, promptRunning : boolean) : void {
+        const workspace = this.getWorkspaceConnection(agentID);
+        if (!workspace) return;
+        workspace.setPromptRunning(promptRunning);
     }
 
     async closeConnection(uniqueID : string) : Promise<void> {

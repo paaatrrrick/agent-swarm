@@ -61,25 +61,25 @@ class WebSocketObject {
     async addToMessageStack(agentID : string, incoming : AgentMessage) : Promise<void> {
         const agent = this.agentIDMap.get(agentID);
         if (!agent) return;
-        console.log('\n adding to messages stack\n incoming:')
-        console.log(incoming)
-        console.log('current message stack: ');
-        console.log(agent.messageStack);
+        // console.log('\n adding to messages stack\n incoming:')
+        // console.log(incoming)
+        // console.log('current message stack: ');
+        // console.log(agent.messageStack);
         if (incoming.start) {
             if (agent.messageStack !== undefined) await Agent.findByIdAndUpdate(agentID, {$push: {messages: agent.messageStack}});
             //delete start from incoming
             delete incoming.start
             incoming.content = "";
             agent.messageStack = incoming;
-            console.log('\nnew message stack s\n');
+            // console.log('\nnew message stack s\n');
 
         } else if (agent.messageStack === undefined && !incoming.end) {
             agent.messageStack = incoming;
-            console.log('\nnew message stack 2\n');
+            // console.log('\nnew message stack 2\n');
 
         } else if (incoming.content) {
             agent.messageStack.content += incoming.content;
-            console.log('\nnew message stack 3\n');
+            // console.log('\nnew message stack 3\n');
         }
 
         if (incoming.end) {

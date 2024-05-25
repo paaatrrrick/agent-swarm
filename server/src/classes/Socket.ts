@@ -94,6 +94,7 @@ class WebSocketObject {
             const data = JSON.parse(message.toString());
             console.log('\nincoming message\n'); 
             console.log(data);
+            console.log("AKHIL-1");
     
             if (data.type === 'config') {
                 const agent = await Agent.findById(data.agentID);
@@ -102,6 +103,7 @@ class WebSocketObject {
                     return;
                 }
                 if (!this.agentIDMap.get(data.agentID)) this.agentIDMap.set(data.agentID, {clientUniqueID: [], promptRunning: false, messageStack: undefined});
+                console.log("AKHIL-2");
                 if (data.connectionType === "client") this.addClientConnection(data.agentID, ws, uniqueID);
                 if (data.connectionType === "workspace") this.addWorkspaceConnection(data.agentID, ws, uniqueID);
                 return;
@@ -125,11 +127,13 @@ class WebSocketObject {
         this.uniqueIDMap.set(uniqueID, {type: "client", connectionManager: clientConnection});
         this.agentIDMap.get(agentID).clientUniqueID.push(uniqueID);
         const workspaceConnection = this.getWorkspaceConnection(agentID);
+        console.log("AKHIL-3");
         if (!workspaceConnection) {
             clientConnection.sendMessage("config", {promptRunning: false, workspaceConnection: false});
             return;
         }
         const promptRunning = workspaceConnection.getPromptRunning() || false;
+        console.log("AKHIL-4", workspaceConnection.getPromptRunning());
         clientConnection.sendMessage("config", {promptRunning: promptRunning, workspaceConnection: true});
     }
 

@@ -133,7 +133,7 @@ class WebSocketObject {
             return;
         }
         const promptRunning = workspaceConnection.getPromptRunning() || false;
-        console.log("AKHIL-4", workspaceConnection.getPromptRunning());
+        console.log("AKHIL-4");
         clientConnection.sendMessage("config", {promptRunning: promptRunning, workspaceConnection: true});
     }
 

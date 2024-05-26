@@ -25,7 +25,7 @@ os.chdir(directory)
 
 startup_info = subprocess.STARTUPINFO()
 startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-# reka: a7dad22ea5b2e1b5059a882ff7fd0ed6454d24654c9734679cefdc9762990a04	
+# reka: redacted	
 open_interpreter_process = subprocess.Popen(
     ["poetry", "run", "interpreter", "--os", "--api_key", "redacted", "--model", "anthropic/claude-3-haiku-20240307"],
     # ["poetry", "run", "interpreter", "--os", "--model", "openai/gpt-4o"],

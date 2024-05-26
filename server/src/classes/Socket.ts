@@ -93,7 +93,7 @@ class WebSocketObject {
         try {
             const data = JSON.parse(message.toString());
             console.log('\nincoming message\n'); 
-            console.log(data.content);
+            console.log(data);
     
             if (data.type === 'config') {
                 const agent = await Agent.findById(data.agentID);

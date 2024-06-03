@@ -18,9 +18,19 @@ WorkspaceRouter.get('/promptComplete/:agentID',  catchAsync(async (req: Request,
     res.status(200).send({ message: 'Account Created' });
 }));
 
-WorkspaceRouter.get('/test',  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    console.log('test');
-    res.status(200).send({message: 'test'});
+WorkspaceRouter.get('/test1',  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    console.log('test1');
+    res.status(200).send({message: 'test1'});
+}));
+
+WorkspaceRouter.get('/test2',  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    console.log('test2');
+    res.status(200).send({message: 'test2'});
+}));
+
+WorkspaceRouter.get('/test3',  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    console.log('test3');
+    res.status(200).send({message: 'test3'});
 }));
 
 export default WorkspaceRouter;

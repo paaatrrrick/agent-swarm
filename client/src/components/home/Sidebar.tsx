@@ -73,7 +73,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                     <Icon type="hamburger" onClick={toggleSidebar} />
                 </div>
                 <hr className='w-full border-primary border-1 mt-4' />
-                <div className='mt-4 w-full gap-4 flex flex-col items-start justify-start overflow-y-scroll h-full scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent'>
+                <div className='mt-4 w-full gap-4 flex flex-col items-start justify-start overflow-y-scroll h-full no-scrollbar'>
                     {agents.map((agent, index) => (
                         <Button className={clsx('w-full', currentAgentIndex === index && 'bg-purple-500 text-white hover:bg-purple-600')} onClick={() => { setCurrentAgentIndex(index) }} key={index}>
                             <p className='mr-2'>Agent</p>#{index + 1}

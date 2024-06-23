@@ -69,7 +69,7 @@ export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessag
                 <p className='font-mono'>Run a prompt to see messages appear</p>
             }
 
-            <div className='flex-1 w-full gap-4 flex items-start flex-col justify-start overflow-y-scroll hideScrollBar pb-16'>
+            <div className='flex-1 w-full gap-4 flex items-start flex-col justify-start overflow-y-scroll no-scrollbar pb-16'>
 
                 {reducedMessages.map((message, index) => {
                     // @ts-ignore

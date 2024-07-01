@@ -53,7 +53,7 @@ class ClientConnection {
 
         const promptRunning = workspace.getPromptRunning();
 
-        if (promptRunning) {
+        if (promptRunning === "true") {
             this.sendMessage('error',  {message:'You already have a prompt running for this agent'});
             return;
         }

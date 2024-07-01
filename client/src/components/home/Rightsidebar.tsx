@@ -41,13 +41,12 @@ const base64Base = "data:image/png;base64,";
 
 export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessages }: SidebarInterface) {
     console.log(agentMessages);
-
     //remove all agentMessges where the role is not user, assistant, or computer
     var reducedMessages = agentMessages.filter((message) => { return message.role === "user" || message.role === "assistant" || message.role === "computer" || message.role === "stop" })
 
 
-    //remove all messages where message.content is undefined or an empty string
-    reducedMessages = reducedMessages.filter((message) => { return message.content !== undefined && message.content !== "" })
+    //remove all messages where message.content is undefined or an empty string, 
+    reducedMessages = reducedMessages.filter((message) => (message.content !== undefined && message.content !== "") || message.role === "stop")
 
 
     return (

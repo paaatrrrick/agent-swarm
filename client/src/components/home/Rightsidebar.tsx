@@ -32,14 +32,18 @@ interface SidebarInterface {
 const typeToComponent = {
     "user": UserMessage,
     "assistant": AssistantMessage,
-    "computer": ComputerMessage
+    "computer": ComputerMessage,
+    "stop": StopMessage
 }
+
+
+const base64Base = "data:image/png;base64,";
 
 export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessages }: SidebarInterface) {
     console.log(agentMessages);
 
     //remove all agentMessges where the role is not user, assistant, or computer
-    var reducedMessages = agentMessages.filter((message) => { return message.role === "user" || message.role === "assistant" || message.role === "computer" })
+    var reducedMessages = agentMessages.filter((message) => { return message.role === "user" || message.role === "assistant" || message.role === "computer" || message.role === "stop" })
 
 
     //remove all messages where message.content is undefined or an empty string
@@ -70,7 +74,6 @@ export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessag
             }
 
             <div className='flex-1 w-full gap-4 flex items-start flex-col justify-start overflow-y-scroll no-scrollbar pb-16'>
-
                 {reducedMessages.map((message, index) => {
                     // @ts-ignore
                     const Component = typeToComponent[message.role]
@@ -83,15 +86,24 @@ export default function Rightsidebar({ isSidebarOpen, toggleSidebar, agentMessag
 
 
 const messageClassnames = 'flex flex-col items-start justify-start w-full rounded-sm bg-primary-foreground border py-2 px-2 gap-2 border-2'
-const textClassnames = 'text-xs font-mono'
-const h6Classnames = 'text-sm font-mono'
+const textClassnames = 'text-sm font-mono'
+const h6Classnames = 'text-md font-mono'
 const defaultCodeStyles = 'text-xs font-mono border border-primary rounded-sm w-full border-2'
+
+
+function StopMessage({ role, type, format, content }: AgentMessage) {
+    return (
+        <div className={clsx(messageClassnames, 'border-red-500')}>
+            <h6 className={clsx(h6Classnames, 'text-red-300')}>User Sent Stop Signal: 🛑</h6>
+        </div>
+    )
+}
 
 
 function UserMessage({ role, type, format, content }: AgentMessage) {
     return (
         <div className={clsx(messageClassnames, 'border-green-500')}>
-            <h6 className={clsx(h6Classnames)}>User Message: 🤨</h6>
+            <h6 className={clsx(h6Classnames)}>User Message: 💬</h6>
             <p className={clsx(textClassnames)}>{content}</p>
         </div>
     )
@@ -136,8 +148,9 @@ function AssistantMessage({ role, type, format, content }: AgentMessage) {
 function ComputerMessage({ role, type, format, content }: AgentMessage) {
     return (
         <div className={clsx(messageClassnames, 'border-purple-500')}>
-            <h6 className={clsx(h6Classnames)}>Computer: 🖥</h6>
-            <p className={clsx(textClassnames)}>{content}</p>
+            <h6 className={clsx(h6Classnames)}>{`Computer${format === 'base64.png' ? ' Screen Shot' : ""}: 🖥`}</h6>
+            {format === "base64.png" && <img src={`${base64Base}${content}`} alt="Base64 Image" />}
+            {format !== "base64.png" && <p className={clsx(textClassnames)}>{content}</p>}
         </div>
     )
 }

@@ -20,3 +20,6 @@ export interface AgentType {
     ipAddress?: string,
     messages?: any[],
 }
+
+
+export type promptRunningType = "true" | "false" | "loading";

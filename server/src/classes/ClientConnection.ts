@@ -21,7 +21,14 @@ class ClientConnection {
         console.log('')
         console.log('handle message in client connection');
         if (type === 'prompt') return await this.handlePromptMessage(data);
-        if (type === 'terminate') return await this.parent.getWorkspaceConnection(this.agentID)?.handleTerminate();
+        if (type === 'terminate') return await this.handleTerminate();
+    }
+
+    async handleTerminate() : Promise<void> {
+        const workspace = this.parent.getWorkspaceConnection(this.agentID);
+        if (!workspace) return;
+        workspace.handleMessage({"sender": "client", "payload" : [{ "role": "stop", start: true, end: true}]})
+        return await workspace.handleTerminate();
     }
 
     async sendMessage(type: string, message : any) : Promise<void> {
@@ -51,7 +58,7 @@ class ClientConnection {
             return;
         }
 
-        workspace.setPromptRunning(true);
+        workspace.setPromptRunning("true");
         this.parent.getWorkspaceConnection(this.agentID)?.handleMessage({"sender": "client", 
         "payload" : [
             { "role": "user", "type": "message", start: true },

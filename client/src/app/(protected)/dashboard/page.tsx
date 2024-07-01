@@ -13,6 +13,12 @@ import AgentMessage from '@/types/websocket';
 import { handleIncomingWorkspaceStatus } from '@/helpers/workspaceStatus';
 
 
+//type promptRunning to be a string for true, false, or loading
+
+type promptRunningType = "true" | "false" | "loading";
+
+
+
 const ScreenComponent = () => {
     const { setError } = useError();
     const { setLoading } = useLoader();
@@ -21,7 +27,7 @@ const ScreenComponent = () => {
     const [profile, setProfile] = useState<UserOrBool>(false);
     const [currentAgentIndex, setCurrentAgentIndex] = useState<number | undefined>(undefined);
     const [agents, setAgents] = useState<StringAgentUndefined[]>([]);
-    const [promptRunning, setPromptRunning] = useState<boolean>(false);
+    const [promptRunning, setPromptRunning] = useState<promptRunningType>("false");
     const [workspaceConnection, setWorkspaceConnection] = useState<boolean>(false);
     const [ws, setWS] = useState<WebSocket | null>(null);
     const [agentMessages, setAgentMessages] = useState<AgentMessage[]>([]);
@@ -151,7 +157,7 @@ const ScreenComponent = () => {
     const setCurrentAgentIndexWrapper = (index: number): void => {
         if (currentAgentIndex === index) return
         ws?.close()
-        setPromptRunning(false)
+        setPromptRunning("false")
         setAgentMessages([])
         setWorkspaceConnection(false)
         setError(undefined);

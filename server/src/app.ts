@@ -18,7 +18,7 @@ import WorkspaceRouter from './routes/workspace';
 const AgentManagerClass : AgentManager = new AgentManager();
 
 
-let websockObject = null;
+let websockObject : WebSocketObject | null = null;
 
 
 export default class Api {
@@ -72,9 +72,6 @@ export default class Api {
             // manualProcess({streamingLink: "https://stream11.radah.ai/hls.teststream.m3u8", ipAddress: "http://34.206.19.33:8000", completed: true});
             // // 18.204.239.49	https://stream12.radah.ai
             // manualProcess({streamingLink: "https://stream12.radah.ai/hls.teststream.m3u8", ipAddress: "http://18.204.239.49:8000", completed: true});
-
-
-            
 
             AgentManagerClass.init();
         });

@@ -2,12 +2,14 @@ import WebSocket from "ws";
 import WebSocketObject from "./Socket";
 import axios from 'axios';
 import Agent from "../models/Agent";
+import { promptRunningType } from "../types/models";
+
 
 class WorkspaceConnection {
     ws: WebSocket;
     agentID: string;
     uniqueID: string;
-    promptrunning: boolean;
+    promptrunning: promptRunningType;
     parent: WebSocketObject;
 
     constructor(ws: WebSocket, agentID: string, uniqueID: string, parent : WebSocketObject) {
@@ -21,11 +23,11 @@ class WorkspaceConnection {
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: this.getPromptRunning(), workspaceConnection : true, successAlert: true});   
     }
 
-    getPromptRunning() : boolean {
+    getPromptRunning() : promptRunningType {
         return this.parent.getPromptRunning(this.agentID);
     }
 
-    setPromptRunning(promptrunning : boolean) : void {
+    setPromptRunning(promptrunning : promptRunningType) : void {
         if (promptrunning === this.getPromptRunning()) return;
         this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: promptrunning, workspaceConnection : true});
         this.parent.setPromptRunning(this.agentID, promptrunning);
@@ -50,6 +52,15 @@ class WorkspaceConnection {
     }
 
 
+    //wait 5 seconds, if promptRunning is still loading, set it to true and send a message to the client
+    async loadingTimeout() {
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        if (this.getPromptRunning() === "loading") {
+            this.setPromptRunning("true");
+            this.parent.sendMessageToAllNeighborClients(this.agentID, 'error', {message: 'Task cancellation failed. Please try again.', secondaryMessage: 'If this issue persists, please contact us on twitter.'});
+        }
+    }
+
     async handleTerminate() : Promise<void> {
         try {
             const agent = await Agent.findById(this.agentID);
@@ -57,7 +68,8 @@ class WorkspaceConnection {
             console.log(this.agentID);
     
             const url : string = `${agent.ipAddress}/stop`;
-            this.setPromptRunning(false);
+            this.setPromptRunning("loading");
+
             this.parent.addToMessageStack(this.agentID, {end: "true"});
             const res = await axios.get(url, {headers: {'Content-Type': 'application/json'}});
             

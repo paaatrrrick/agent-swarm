@@ -13,7 +13,7 @@ WorkspaceRouter.get('/promptComplete/:agentID',  catchAsync(async (req: Request,
 
     if (!websockObject) return res.status(400).send({ message: 'Websocket not initialized' });
 
-    websockObject.setPromptRunningThroughChild(agentID, false);
+    websockObject.setPromptRunningThroughChild(agentID, "false");
 
     res.status(200).send({ message: 'Account Created' });
 }));

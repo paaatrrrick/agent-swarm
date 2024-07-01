@@ -7,6 +7,9 @@ import { Input } from '../ui/input'
 import { StringAgentUndefined } from '@/types/user';
 import Videoplayer from './Videoplayer';
 import { Loader } from '../Loader';
+import { ReloadIcon } from '@radix-ui/react-icons';
+
+type promptRunningType = "true" | "false" | "loading";
 
 interface HomeInterface {
     isSidebarOpen: boolean;
@@ -14,7 +17,7 @@ interface HomeInterface {
     toggleSidebar: () => void;
     toggleRightSidebar: () => void;
     agent: StringAgentUndefined | undefined;
-    promptRunning: boolean;
+    promptRunning: promptRunningType;
     sendMessage: (message: Object) => void;
     currentAgentIndex: number | undefined;
     stopAgent: () => void;
@@ -82,7 +85,7 @@ function Agent({ agent }: { agent: StringAgentUndefined | undefined }) {
 
 interface MessageInputInterface {
     sendMessage: (message: Object) => void;
-    promptRunning: boolean;
+    promptRunning: promptRunningType;
     currentAgentIndex: number | undefined;
     stopAgent: () => void;
     workspaceConnection: boolean;
@@ -104,8 +107,14 @@ function MessageInput({ sendMessage, promptRunning, currentAgentIndex, stopAgent
     return (
         <div className='flex flex-row items-start justify-start mt-8 w-full'>
             <Input type="text" value={prompt} onChange={(e) => { setPrompt(e.target.value) }} placeholder="Prompt interpreter" className='w-full bg-secondary border-border border-2 text-md font-mono placeholder:font-mono h-12 dark:border-white' />
-            {!promptRunning && <Button type="submit" className='ml-3 font-mono w-24 h-12 text-lg bg-purple-500 dark:text-white hover:bg-purple-600' onClick={sendMessageWrapper}>Submit</Button>}
-            {promptRunning && <Button type="submit" className='ml-3 font-mono w-24 bg-red-400 text-white h-12' onClick={stopAgent}>Stop</Button>}
+            {promptRunning === "false" && <Button type="submit" className='ml-3 font-mono w-24 h-12 text-lg bg-purple-500 dark:text-white hover:bg-purple-600' onClick={sendMessageWrapper}>Submit</Button>}
+            {promptRunning === "true" && <Button type="submit" className='ml-3 font-mono w-24 bg-red-400 text-white h-12' onClick={stopAgent}>Stop</Button>}
+            {promptRunning === "loading" &&
+                <Button disabled type="submit" className='ml-3 font-mono h-12 text-lg hover:cursor-not-allowed'>
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Cancelling
+                </Button>
+            }
         </div>
     )
 }

@@ -12,7 +12,7 @@ class WorkspaceConnection {
     promptrunning: promptRunningType;
     parent: WebSocketObject;
 
-    constructor(ws: WebSocket, agentID: string, uniqueID: string, parent : WebSocketObject) {
+    constructor(ws: WebSocket, agentID: string, uniqueID: string, parent: WebSocketObject) {
         this.ws = ws;
         this.agentID = agentID;
         this.uniqueID = uniqueID;
@@ -20,22 +20,22 @@ class WorkspaceConnection {
     }
 
     init() {
-        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: this.getPromptRunning(), workspaceConnection : true, successAlert: true});   
+        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', { promptRunning: this.getPromptRunning(), workspaceConnection: true, successAlert: true });
     }
 
-    getPromptRunning() : promptRunningType {
+    getPromptRunning(): promptRunningType {
         return this.parent.getPromptRunning(this.agentID);
     }
 
-    setPromptRunning(promptrunning : promptRunningType) : void {
+    setPromptRunning(promptrunning: promptRunningType): void {
         if (promptrunning === this.getPromptRunning()) return;
-        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: promptrunning, workspaceConnection : true});
+        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', { promptRunning: promptrunning, workspaceConnection: true });
         this.parent.setPromptRunning(this.agentID, promptrunning);
     }
 
-    async handleMessage(message : any) : Promise<void> {
+    async handleMessage(message: any): Promise<void> {
         if (message.sender && message.sender === 'client') {
-            this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : message.payload});
+            this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', { payload: message.payload });
 
             for (let subsect of message.payload) {
                 this.parent.addToMessageStack(this.agentID, subsect);
@@ -43,11 +43,11 @@ class WorkspaceConnection {
             return
         }
         this.parent.addToMessageStack(this.agentID, message);
-        this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', {payload : [message]});
+        this.parent.sendMessageToAllNeighborClients(this.agentID, 'workspaceStatus', { payload: [message] });
     }
 
     async handleClose() {
-        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', {promptRunning: this.getPromptRunning(), workspaceConnection : false});
+        this.parent.sendMessageToAllNeighborClients(this.agentID, 'config', { promptRunning: this.getPromptRunning(), workspaceConnection: false });
         this.parent.closeConnection(this.uniqueID);
     }
 
@@ -57,22 +57,22 @@ class WorkspaceConnection {
         await new Promise(resolve => setTimeout(resolve, 5000));
         if (this.getPromptRunning() === "loading") {
             this.setPromptRunning("true");
-            this.parent.sendMessageToAllNeighborClients(this.agentID, 'error', {message: 'Task cancellation failed. Please try again.', secondaryMessage: 'If this issue persists, please contact us on twitter.'});
+            this.parent.sendMessageToAllNeighborClients(this.agentID, 'error', { message: 'Task cancellation failed. Please try again.', secondaryMessage: 'If this issue persists, please contact us on twitter.' });
         }
     }
 
-    async handleTerminate() : Promise<void> {
+    async handleTerminate(): Promise<void> {
         try {
             const agent = await Agent.findById(this.agentID);
             if (!agent) return;
             console.log(this.agentID);
-    
-            const url : string = `${agent.ipAddress}/stop`;
-            this.setPromptRunning("loading");
 
-            this.parent.addToMessageStack(this.agentID, {end: "true"});
-            const res = await axios.get(url, {headers: {'Content-Type': 'application/json'}});
-            
+            const url: string = `${agent.ipAddress}/stop`;
+            this.setPromptRunning("loading");
+            this.loadingTimeout()
+            this.parent.addToMessageStack(this.agentID, { end: "true" });
+            const res = await axios.get(url, { headers: { 'Content-Type': 'application/json' } });
+
             if (res.status !== 200) return;
             return res.data;
 
@@ -83,13 +83,13 @@ class WorkspaceConnection {
         }
     }
 
-    async talkToagent(message : string) : Promise<string> {
+    async talkToagent(message: string): Promise<string> {
         try {
             const agent = await Agent.findById(this.agentID);
             if (!agent) return "agent not found";
-    
-            const url : string = `${agent.ipAddress}/message`;
-            const data = {message: message, first: 0}
+
+            const url: string = `${agent.ipAddress}/message`;
+            const data = { message: message, first: 0 }
             try {
                 await fetch(url, {
                     method: 'POST',
@@ -98,7 +98,7 @@ class WorkspaceConnection {
                     },
                     body: JSON.stringify(data)
                 });
-            } catch (error) {}
+            } catch (error) { }
             // const response = await axios.post(url, data, {headers: {'Content-Type': 'application/json'}});
             // console.log(response)
             // console.log('talk to agent has a response (websocket')

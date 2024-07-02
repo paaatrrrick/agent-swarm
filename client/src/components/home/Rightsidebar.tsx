@@ -93,7 +93,7 @@ const defaultCodeStyles = 'text-xs font-mono border border-primary rounded-sm w-
 function StopMessage({ role, type, format, content }: AgentMessage) {
     return (
         <div className={clsx(messageClassnames, 'border-red-500')}>
-            <h6 className={clsx(h6Classnames, 'text-red-300')}>User Sent Stop Signal: 🛑</h6>
+            <h6 className={clsx(h6Classnames, 'dark:text-red-300')}>User Sent Stop Signal: 🛑</h6>
         </div>
     )
 }

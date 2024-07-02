@@ -89,7 +89,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, profile, agents,
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button className='w-full border-2 hover:bg-transparent text-primary font-semibold border-primary bg-offbackground'>
-                                    Requent Another Agent +
+                                    Request Another Agent +
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
